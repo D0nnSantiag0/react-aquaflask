@@ -220,6 +220,7 @@ export const resetPassword = (token, passwords) => async (dispatch) => {
     }
 
 }
+
 export const allUsers = () => async (dispatch) => {
     try {
         dispatch({ type: ALL_USERS_REQUEST })
@@ -283,6 +284,7 @@ export const getUserDetails = (id) => async (dispatch) => {
         })
     }
 }
+
 export const deleteUser = (id) => async (dispatch) => {
 
     try {

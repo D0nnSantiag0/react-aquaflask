@@ -1,7 +1,5 @@
 import React from "react";
-import {Link, NavLink, useNavigate } from "react-router-dom";
-import { logout } from "../../actions/userActions";
-import { useDispatch, useSelector } from "react-redux";
+import { NavLink, useNavigate, Link } from "react-router-dom";
 import {
   Box,
   Button,
@@ -14,37 +12,25 @@ import {
   useColorMode,
   useMediaQuery,
 } from "@chakra-ui/react";
-
 import logo from "../../img/favicon.ico";
 //import { FiUser } from "react-icons/fi";
 import { BsSuitHeart } from "react-icons/bs";
-import { BsBag, BsFillPersonFill} from "react-icons/bs";
+import { BsBag } from "react-icons/bs";
 import { DarkModeBtn } from "./DarkModeBtn";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../actions/userActions";
 
 // import SideMenu from "./Sidebar";
-// import Profile from "../user/profile";
-// import "../../App.css";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+// import Profile from "../Profile/Profile";
 
 const Navbar = () => {
-  const [isLargerThan] = useMediaQuery("(min-width: 768px)");
-  const navigate = useNavigate();
+  // const { auth } = useSelector((state) => state.auth);
   const { user, loading } = useSelector((state) => state.auth);
 
- 
-  const notify = (message = "") =>
-    toast.success(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    });
+  const [isLargerThan] = useMediaQuery("(min-width: 768px)");
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  // const auth = useSelector((state) => state.AuthReducer.isAuth);
 
   // const cart = useSelector((store) => store.cart.cart);
   // const wishlist = useSelector((store) => store.wishReducer.wishlist);
@@ -73,12 +59,14 @@ const Navbar = () => {
   const handleSignup = () => {
     navigate("/register");
   };
+
   const logoutHandler = () => {
     dispatch(logout());
-
-    notify("Logged Out Successfully");
   };
- 
+  const handleProfile = () =>{
+    navigate("/me")
+  }
+
   return (
     <div className="Navbar">
       <Flex
@@ -87,10 +75,9 @@ const Navbar = () => {
         justifyContent={"right"}
         gap="10px"
         alignItems={"center"}
-        bg={colorMode === "dark" ? "none" : "#19376D"}
+        bg={colorMode === "dark" ? "none" : "#ebecec"}
       >
-            {user ? (
-          <Box>
+  {user ? (
             <div className="ml-4 dropdown d-inline">
               <Link
                 to="#!"
@@ -101,18 +88,6 @@ const Navbar = () => {
                 aria-haspopup="true"
                 aria-expanded="false"
               >
-                {/* <figure className="avatar avatar-nav"> */}
-              
-                   <Icon
-                w={6}
-                h={6}
-                my="4"
-                mx="3"
-                as={BsFillPersonFill}
-                cursor={"pointer"}
-              />
-                {/* </figure> */}
-
                 <span>{user && user.name}</span>
               </Link>
 
@@ -145,22 +120,25 @@ const Navbar = () => {
                 </Link>
               </div>
             </div>
-          </Box>
-        ) : ( !loading && (
-          <Button
-            bg={"black"}
-            color={"whitesmoke"}
-            border={"1px solid beige"}
-            _hover={{
-              bg: "none",
-              color: "teal",
-            }}
-            onClick={handleSignup}
-          >
-            Sign up
-          </Button>
-        )
-        )}
+          ) : (
+            !loading && (
+              <Link to="/login" className="btn ml-4" id="login_btn">
+                Login
+              </Link>
+            )
+          )}
+        {/* <Button
+          bg={"black"}
+          color={"whitesmoke"}
+          border={"1px solid beige"}
+          _hover={{
+            bg: "none",
+            color: "teal",
+          }}
+          onClick={logoutHandler}
+        >
+          Logout
+        </Button> */}
         <Box mr={["5", "6", "7", "9"]}>
           {" "}
           <DarkModeBtn />
@@ -177,13 +155,13 @@ const Navbar = () => {
               style={({ isActive }) => (isActive ? activeStyle : baseStyle)}
               to="/products"
             >
-              {/* <Text
+              <Text
                 color={colorMode === "dark" ? "white" : "black"}
                 my="4"
                 mx="2"
               >
-                WELCOME TO DRINKH20
-              </Text> */}
+                Home
+              </Text>
             </NavLink>
           </HStack>
         ) : null}

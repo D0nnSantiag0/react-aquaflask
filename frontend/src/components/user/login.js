@@ -1,50 +1,71 @@
-import React, { Fragment, useState, useEffect } from "react";
+import {
+  Box,
+  Button,
 
-import { Link, useNavigate, useLocation } from "react-router-dom";
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  InputGroup,
+  InputRightElement,
 
-import Loader from "../layout/Loader";
-
-import MetaData from "../layout/MetaData";
-
+  Spinner,
+  Stack,
+  Text,
+ 
+} from "@chakra-ui/react";
+//import swal from "sweetalert";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { login, clearErrors } from "../../actions/userActions";
+
 
 import { toast } from "react-toastify";
 
-import Button from 'react-bootstrap/Button';
-
 import "react-toastify/dist/ReactToastify.css";
+//import { LOGIN_S } from "../redux/AuthReducer/actionType";
+
+import { ViewIcon } from "@chakra-ui/icons";
+const notify = (message = "") =>
+  toast.error(message, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "dark",
+  });
 
 const Login = () => {
+  // const [username, setUsername] = useState("");
+
   const [email, setEmail] = useState("");
-
   const [password, setPassword] = useState("");
-
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  let navigate = useNavigate();
-
-  let location = useLocation();
 
   const redirect = location.search ? location.search.split("=")[1] : "/";
-
-
+  const [eye, setEye] = useState(false);
   const { isAuthenticated, error, loading } = useSelector(
     (state) => state.auth
   );
 
-  const notify = (message = "") =>
-    toast.error(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    });
+  const handleEye = () => {
+    setEye((prev) => !prev);
+  };
+
+  if (isAuthenticated) {
+    // history.push('/')
+
+    navigate(redirect);
+  }
+
 
   useEffect(() => {
     if (isAuthenticated && redirect === "shipping") {
@@ -60,81 +81,73 @@ const Login = () => {
     }
   }, [dispatch, isAuthenticated, error, navigate, redirect]);
 
-  const submitHandler = (e) => {
+  const loginHandler = (e) => {
     e.preventDefault();
 
     dispatch(login(email, password));
   };
 
   return (
-    <Fragment>
-      {loading ? (
-        <Loader />
-      ) : (
-        <Fragment>
-          <MetaData title={"Login"} />
-
-          <div class="row wrapper"style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '80vh',
-          }} >
-            <div className="col-10 col-lg-5">
-              <form className="shadow-lg" onSubmit={submitHandler}>
-                <h1 className="mb-3">Login</h1>
-                
-
-                <div className="form-group col-lg-12">
-                  <label htmlFor="email_field">Email</label>
-
-                  <input
-                    type="email"
-                    id="email_field"
-                    className="form-control"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-
-                <div className="form-group col-lg-12">
-                  <label htmlFor="password_field">Password</label>
-
-                  <input
-                    type="password"
-                    id="password_field"
-                    className="form-control"
+    <>
+      <Flex minH={"100vh"} align={"center"} justify={"center"}>
+        <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+          <Stack align={"center"}>
+            <Heading fontSize={"4xl"} textTransform={"uppercase"}>
+              Sign in to your account
+            </Heading>
+          </Stack>
+          <Box rounded={"lg"} boxShadow={"lg"} p={8}>
+            <Stack spacing={4}>
+              <FormControl id="username" isRequired>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  type="text"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </FormControl>
+              <FormControl id="password" isRequired>
+                <FormLabel>Password</FormLabel>
+                <InputGroup>
+                  <Input
+                    type={eye ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                </div>
-            
-                <div className="form-group col-lg-12">
-                <Link to="/password/forgot" className="float-right mb-4">
-                Forgot Password?
-                    </Link>
-                </div>
-    
+                  <InputRightElement h={"full"}>
+                    <Button variant={"ghost"} onClick={handleEye}>
+                      <ViewIcon />
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
+              <Stack spacing={10}>
                 <Button
-                 variant="light"
-                  id="login_button"
-                  type="submit"
-                  className="btn btn-block py-3"
+                  bg={"black"}
+                  color={"whitesmoke"}
+                  _hover={{
+                    bg: "none",
+                    color: "black",
+                    border: "1px solid black",
+                  }}
+                  onClick={loginHandler}
                 >
-                  LOGIN
+                  {loading ? <Spinner /> : "Login"}
                 </Button>
-                <div className="form-group col-lg-12">
-                <Link to="/register" className="float-right mt-3">
-                  New User?
-                </Link>
-                </div>
-
-              </form>
-            </div>
-          </div>
-        </Fragment>
-      )}
-    </Fragment>
+              </Stack>
+              <Stack pt={6}>
+                <Text align={"center"}>
+                  Don't have an account?
+                  <RouterLink to="/register" color={"blue.400"}>
+                    Signup
+                  </RouterLink>
+                </Text>
+              </Stack>
+            </Stack>
+          </Box>
+        </Stack>
+      </Flex>
+    </>
   );
 };
 
