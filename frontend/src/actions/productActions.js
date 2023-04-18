@@ -128,3 +128,21 @@ export const updateProduct = (id, productData) => async (dispatch) => {
   }
 }
 
+export const deleteProduct = (id) => async (dispatch) => {
+  try {
+      dispatch({ type: DELETE_PRODUCT_REQUEST })
+      const { data } = await axios.delete(`${process.env.REACT_APP_API}/api/v1/admin/product/${id}`, {
+          withCredentials: true //correct
+      })
+      dispatch({
+          type: DELETE_PRODUCT_SUCCESS,
+          payload: data.success
+      })
+  } catch (error) {
+      dispatch({
+          type: DELETE_PRODUCT_FAIL,
+          payload: error.response.data.message
+      })
+  }
+}
+
