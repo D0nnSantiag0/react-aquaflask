@@ -27,7 +27,7 @@ import { Carousel } from "react-bootstrap";
 import {
     getAdminProducts,
     clearErrors,
-    // deleteProduct,
+    deleteProduct,
 } from "../../actions/productActions";
 
 import { DELETE_PRODUCT_RESET } from "../../constants/productConstants";
@@ -177,13 +177,13 @@ const ProductsList = () => {
                         >
                             <i className="fa fa-pencil"></i>
                         </Link>
-{/* 
+
                         <button
                             className="btn btn-danger py-1 px-2 ml-2"
                             onClick={() => deleteProductHandler(product._id)}
                         >
                             <i className="fa fa-trash"></i>
-                        </button> */}
+                        </button>
                     </Fragment>
                 ),
             });
@@ -192,30 +192,31 @@ const ProductsList = () => {
         return data;
     };
 
-    // const deleteProductHandler = (id) => {
-    //     dispatch(deleteProduct(id));
-    // };
+    const deleteProductHandler = (id) => {
+        dispatch(deleteProduct(id));
+    };
 
     return (
+        
         <Fragment>
             <MetaData title={"All Products"} />
-      
-
+            <div className="col-12 col-md-2">
+                <Sidebar />
+                </div>
+                              
             <div class="row wrapper"style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     height: '80vh',
                 }} >
-                        
-                {/* <div className="col-12 col-md-2">
-                </div> */}
+                             
 
-                <div className="col-15 col-md-15">
+
+                <div className="col-13 col-md-8">
                     <Fragment>
-                    <Sidebar />
-                        <h1 className="my-5">All Products</h1>
-                <div className="form-group col-lg-12">
+                <h1 className="my-5">All Products</h1>
+                <div className="form-group col-lg-10">
                 <Link to="/admin/product" style={linkStyle} className="float-right mt-3">
                  CREATE NEW PRODUCT
                 </Link>
@@ -225,7 +226,7 @@ const ProductsList = () => {
                         ) : (
                             <MDBDataTable
                                 data={setProducts()}
-                                className="center"
+                                className="px-3"
                                 bordered
                                 striped
                                 hover

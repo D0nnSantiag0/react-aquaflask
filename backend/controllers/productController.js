@@ -1,6 +1,5 @@
 const Product = require("../models/product");
 const mongoose = require("mongoose");
-// const Product = require("../models/product");
 const APIFeatures = require("../utils/apiFeatures.js");
 const ErrorHandler = require("../utils/errorHandler");
 const cloudinary = require("cloudinary");
@@ -32,7 +31,6 @@ const getProducts = async (req, res, next) => {
   });
 };
 
-//create new product
 const newProduct = async (req, res, next) => {
   let images = [];
 
@@ -70,34 +68,6 @@ const newProduct = async (req, res, next) => {
     product,
   });
 };
-// const newProduct = async (req, res, next) => {
-//   const requiredFields = [
-//     "name",
-//     "price",
-//     "description",
-//     "ratings",
-//     "images",
-//     "color",
-//     "size",
-//     "seller",
-//     "stock",
-//     "numOfReviews",
-//     "reviews",
-//   ];
-//   const emptyFields = requiredFields.filter((field) => !req.body[field]);
-
-//   if (emptyFields.length)
-//     return res
-//       .status(400)
-//       .json({ error: "Please fill all fields", emptyFields });
-
-//   try {
-//     const product = await Product.create(req.body);
-//     return res.json({ success: true, product });
-//   } catch (error) {
-//     return res.status(400).json({ error: error.message });
-//   }
-// };
 
 const getSingleProduct = async (req, res, next) => {
   const { id } = req.params;
@@ -192,6 +162,22 @@ const updateProduct = async (req, res, next) => {
 };
 
 
+const deleteProduct = async (req, res, next) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).json({ success: false, message: "Invalid ID" });
+
+  const product = await Product.findOneAndDelete({ _id: id });
+
+  if (!product)
+    return res
+      .status(404)
+      .json({ success: false, message: "Product not found" });
+
+  res.status(200).json({ success: true, message: "Product deleted" });
+};
+
 
 module.exports = {
   getProducts,
@@ -199,5 +185,5 @@ module.exports = {
   getSingleProduct,
   getAdminProducts,
   updateProduct,
- 
+  deleteProduct
 };

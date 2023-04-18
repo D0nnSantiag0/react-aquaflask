@@ -259,6 +259,7 @@ exports.updateProfile = async (req, res, next) => {
   });
 };
 
+
 exports.allUsers = async (req, res, next) => {
   const users = await User.find();
 
@@ -310,20 +311,16 @@ exports.updateUser = async (req, res, next) => {
 exports.deleteUser = async (req, res, next) => {
   const user = await User.findById(req.params.id);
 
+  // console.log(user);
+  
   if (!user) {
     return next(
       new ErrorHandler(`User does not found with id: ${req.params.id}`)
     );
   }
 
-  // Remove avatar from cloudinary
-
-  // const image_id = user.avatar.public_id;
-
-  // await cloudinary.v2.uploader.destroy(image_id);
-
-  await user.remove();
-
+  await user.remove()
+  
   res.status(200).json({
     success: true,
   });

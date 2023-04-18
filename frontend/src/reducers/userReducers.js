@@ -206,11 +206,7 @@ import {
   
   }
   export const allUsersReducer = (state = { users: [] }, action) => {
-  
     switch (action.type) {
-  
-  
-  
         case ALL_USERS_REQUEST:
   
             return {

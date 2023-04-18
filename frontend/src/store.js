@@ -33,6 +33,7 @@ const reducer = combineReducers({
   userDetails: userDetailsReducer,
   newProduct: newProductReducer,
   product: productReducer,
+  allUsers: allUsersReducer,
 });
 
 

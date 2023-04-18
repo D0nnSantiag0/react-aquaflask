@@ -1,5 +1,7 @@
 import React from "react";
-import { NavLink, useNavigate, Link } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { logout } from "../../actions/userActions";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Button,
@@ -11,26 +13,45 @@ import {
   Text,
   useColorMode,
   useMediaQuery,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuGroup,
+  MenuDivider,
+  Avatar,
 } from "@chakra-ui/react";
-import logo from "../../img/favicon.ico";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import { CgProfile } from "react-icons/cg";
+import { MdOutlineFavoriteBorder } from "react-icons/md";
+import { BsCartCheck } from "react-icons/bs";
+import { GrLogout } from "react-icons/gr";
+import logo from "../../img/logo.png";
 //import { FiUser } from "react-icons/fi";
 import { BsSuitHeart } from "react-icons/bs";
-import { BsBag } from "react-icons/bs";
+import { BsBag, BsFillPersonFill } from "react-icons/bs";
 import { DarkModeBtn } from "./DarkModeBtn";
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../actions/userActions";
 
-// import SideMenu from "./Sidebar";
-// import Profile from "../Profile/Profile";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Navbar = () => {
-  // const { auth } = useSelector((state) => state.auth);
-  const { user, loading } = useSelector((state) => state.auth);
-
   const [isLargerThan] = useMediaQuery("(min-width: 768px)");
   const navigate = useNavigate();
+  const { user, loading } = useSelector((state) => state.auth);
+
+  const notify = (message = "") =>
+    toast.success(message, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
   const dispatch = useDispatch();
-  // const auth = useSelector((state) => state.AuthReducer.isAuth);
 
   // const cart = useSelector((store) => store.cart.cart);
   // const wishlist = useSelector((store) => store.wishReducer.wishlist);
@@ -50,138 +71,36 @@ const Navbar = () => {
   const handleHome = () => {
     navigate("/");
   };
-  const handleCart = () => {
-    navigate("/cart");
-  };
+  // const handleCart = () => {
+  //   navigate("/cart");
+  // };
   const handleHeart = () => {
     navigate("/wishlist");
   };
-  const handleSignup = () => {
-    navigate("/register");
+  const handleSignin = () => {
+    navigate("/login");
   };
-
   const logoutHandler = () => {
     dispatch(logout());
-  };
-  const handleProfile = () =>{
-    navigate("/me")
-  }
 
+   
+  };
+
+  // const { cartItems } = useSelector((state) => state.cart);
   return (
     <div className="Navbar">
-      <Flex
-        h={"9vh"}
-        display="flex"
-        justifyContent={"right"}
-        gap="10px"
-        alignItems={"center"}
-        bg={colorMode === "dark" ? "none" : "#ebecec"}
-      >
-  {user ? (
-            <div className="ml-4 dropdown d-inline">
-              <Link
-                to="#!"
-                className="btn dropdown-toggle text-white mr-4"
-                type="button"
-                id="dropDownMenuButton"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <span>{user && user.name}</span>
-              </Link>
-
-              <div
-                className="dropdown-menu"
-                aria-labelledby="dropDownMenuButton"
-              >
-                {user && user.role === "admin" && (
-                  <Link className="dropdown-item" to="/dashboard">
-                    Dashboard
-                  </Link>
-                )}
-
-                <Link className="dropdown-item" to="/orders/me">
-                  Orders
-                </Link>
-
-                <Link className="dropdown-item" to="/me">
-                  Profile
-                </Link>
-
-                {/*<Link className="dropdown-item text-danger" to="/" onClick={logoutHandler}>*/}
-
-                <Link
-                  className="dropdown-item text-danger"
-                  to="/"
-                  onClick={logoutHandler}
-                >
-                  Logout
-                </Link>
-              </div>
-            </div>
-          ) : (
-            !loading && (
-              <Link to="/login" className="btn ml-4" id="login_btn">
-                Login
-              </Link>
-            )
-          )}
-        {/* <Button
-          bg={"black"}
-          color={"whitesmoke"}
-          border={"1px solid beige"}
-          _hover={{
-            bg: "none",
-            color: "teal",
-          }}
-          onClick={logoutHandler}
-        >
-          Logout
-        </Button> */}
-        <Box mr={["5", "6", "7", "9"]}>
-          {" "}
-          <DarkModeBtn />
-        </Box>
-      </Flex>
-      <Flex fontWeight="bold">
+      <Flex fontWeight="bold" bg={colorMode === "dark" ? "none" : "#ebecec"}>
         <HStack onClick={handleHome} cursor={"pointer"}>
-          <Image width={["25px"]} m={5} src={logo} alt="logo" />
+          <Image width={["200px"]} m={5} src={logo} alt="logo" />
         </HStack>
         <Spacer />
-        {isLargerThan ? (
-          <HStack>
-            <NavLink
-              style={({ isActive }) => (isActive ? activeStyle : baseStyle)}
-              to="/products"
-            >
-              <Text
-                color={colorMode === "dark" ? "white" : "black"}
-                my="4"
-                mx="2"
-              >
-                Home
-              </Text>
-            </NavLink>
-          </HStack>
-        ) : null}
 
         <Spacer />
 
         <HStack>
-          {/* <Box>
-            <Icon
-              w={6}
-              h={6}
-              my="4"
-              mx={isLargerThan ? "3" : "1"}
-              as={BsSearch}
-            />
-          </Box> */}
-
           <Box onClick={handleHeart}>
             <Flex
-              onClick={handleCart}
+              // onClick={handleCart}
               alignItems={"center"}
               alignContent={"center"}
               justifyContent={"center"}
@@ -209,7 +128,7 @@ const Navbar = () => {
           </Box>
           <Box>
             <Flex
-              onClick={handleCart}
+              // onClick={handleCart}
               alignItems={"center"}
               alignContent={"center"}
               justifyContent={"center"}
@@ -224,11 +143,93 @@ const Navbar = () => {
                 bg="blue.500"
                 color="white"
               >
-                {/* {cart ? cart.length : 0} */}
+                {/* {cartItems.length} */}
               </Text>
             </Flex>
           </Box>
-          {/* <Box> {!isLargerThan && <SideMenu colorMode={colorMode} />}</Box> */}
+
+          {user ? (
+            <div>
+              <Menu>
+                <MenuButton
+                  p="0"
+                  borderRadius={"50%"}
+                  bg="none"
+                  color="black"
+                  as={Button}
+                  colorScheme="none"
+                  rightIcon={<ChevronDownIcon ml={"-15px"} fontSize={"20px"} />}
+                >
+                  <Avatar
+                    size={"sm"}
+                    name={user.length !== 0 ? user.name : ""}
+                    src={user.avatar && user.avatar.url}
+                  />
+                  <Text
+                    fontSize={"xs"}
+                    color={colorMode === "dark" ? "white" : "black"}
+                  >
+                    {user.length !== 0 ? user.name : ""}
+                  </Text>
+                </MenuButton>
+                <MenuList>
+                  <MenuGroup>
+                    <MenuItem fontWeight={"bold"}>
+                      {user.length !== 0 ? user.name : ""}
+                    </MenuItem>
+                    <MenuDivider />
+                    {user ? (
+                      <MenuItem onClick={() => navigate("/me")}>
+                        <Avatar
+                          size={"xs"}
+                          name={user.length !== 0 ? user.name : ""}
+                        />
+                        <Text fontSize={"sm"}>
+                          Profile
+                        </Text>
+                      </MenuItem>
+                    ) : (
+                      <MenuItem onClick={() => navigate("/myaccount")}>
+                        <CgProfile /> My Account
+                      </MenuItem>
+                    )}
+
+                    <MenuItem onClick={() => navigate("/wishlist")}>
+                      <MdOutlineFavoriteBorder color={"red"} />
+                      Wishlist
+                    </MenuItem>
+                    <MenuItem onClick={() => navigate("/cart")}>
+                      <BsCartCheck color={"blue"} />
+                      Cart
+                    </MenuItem>
+                    <MenuItem onClick={logoutHandler}>
+                      <GrLogout />
+                      Logout
+                    </MenuItem>
+                  </MenuGroup>
+                </MenuList>
+              </Menu>
+            </div>
+          ) : (
+            !loading && (
+              <Button
+                bg={"black"}
+                color={"whitesmoke"}
+                border={"1px solid beige"}
+                _hover={{
+                  bg: "none",
+                  color: "teal",
+                }}
+                onClick={handleSignin}
+              >
+                Login
+              </Button>
+            )
+          )}
+          <Box mr={["5", "6", "7", "9"]}>
+            {" "}
+            <DarkModeBtn />
+          </Box>
         </HStack>
       </Flex>
     </div>

@@ -18,6 +18,9 @@ import {
   UPDATE_PRODUCT_SUCCESS,
   UPDATE_PRODUCT_FAIL,
   UPDATE_PRODUCT_RESET,
+  DELETE_PRODUCT_REQUEST,
+  DELETE_PRODUCT_SUCCESS,
+  DELETE_PRODUCT_FAIL
 
 } from "../constants/productConstants";
 
@@ -90,7 +93,7 @@ export const newProduct = (productData) => async (dispatch) => {
           headers: {
               'Content-Type': 'application/json'
           },
-          // withCredentials: true //correct
+          withCredentials: true //correct
       }
       const { data } = await axios.post(`${process.env.REACT_APP_API}/api/v1/admin/product/new`, productData, config)
       dispatch({
