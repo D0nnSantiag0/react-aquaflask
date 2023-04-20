@@ -311,8 +311,6 @@ exports.updateUser = async (req, res, next) => {
 exports.deleteUser = async (req, res, next) => {
   const user = await User.findById(req.params.id);
 
-  // console.log(user);
-  
   if (!user) {
     return next(
       new ErrorHandler(`User does not found with id: ${req.params.id}`)
