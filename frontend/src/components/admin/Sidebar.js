@@ -47,15 +47,15 @@ export default function SideBar() {
                 <Link to="/dashboard">Dashboard</Link>
               </Box>
               <Box>
-                <Link to="/admin/products">All Products</Link>
+                <Link to="/admin/products">PRODUCTS</Link>
               </Box>
                <Box>
-                <Link to="/admin/users">All Users</Link>
-              </Box>
-             {/* <Box>
-                <Link to="/women">Women's</Link>
+                <Link to="/admin/users">USERS</Link>
               </Box>
               <Box>
+                <Link to="/admin/orders">ORDERS</Link>
+              </Box>
+           {/*   <Box>
                 <Link to="/shoes">Shoes</Link>
               </Box> */}
             </Stack>

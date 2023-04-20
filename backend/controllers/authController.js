@@ -309,17 +309,16 @@ exports.updateUser = async (req, res, next) => {
 };
 
 exports.deleteUser = async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+  const { id } = req.params;
 
-  if (!user) {
-    return next(
-      new ErrorHandler(`User does not found with id: ${req.params.id}`)
-    );
-  }
+  const user = await User.findOneAndDelete({ _id: id });
 
-  await user.remove()
+  if (!user)
+    return res
+      .status(404)
+      .json({ success: false, message: "Product not found" });
+
+  res.status(200).json({ success: true, message: "Product deleted" });
   
-  res.status(200).json({
-    success: true,
-  });
+
 };

@@ -29,6 +29,19 @@ import UpdateUser from "./components/admin/UpdateUser";
 import NewProduct from "./components/admin/NewProduct";
 import ProductsList from "./components/admin/ProductList";
 import UpdateProduct from "./components/admin/UpdateProduct";
+import OrdersList from "./components/admin/OrderList";
+import ProcessOrder from "./components/admin/ProcessOrder";
+
+
+
+//-------------------ORDER----------------------//
+import Cart from "./components/cart/cart";
+import Shipping from "./components/cart/Shipping";
+import ConfirmOrder from "./components/cart/ConfirmOrder";
+import Payment from "./components/cart/Payment";
+import OrderSuccess from "./components/cart/OrderSuccess";
+import ListOrders from "./components/order/ListOrders";
+import OrderDetails from "./components/order/OrderDetails";
 
 
 
@@ -47,6 +60,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} exact="true" />
         <Route path="/products" element={<Home />} exact="true" />
+        <Route path="/search/:keyword" element={<Home />} exact="true" />
         <Route path="/product/:id" element={<ProductDetails />} exact="true" />
 
         <Route path="/login" element={<Login />} exact="true" />
@@ -59,8 +73,16 @@ function App() {
         <Route path="/admin/product/:id" element={<ProtectedRoute isAdmin={true}><UpdateProduct /></ProtectedRoute>}/>
         <Route path="/admin/users" element={<ProtectedRoute isAdmin={true}><UsersList /></ProtectedRoute>}/>
         <Route path="/admin/user/:id" element={<ProtectedRoute isAdmin={true}><UpdateUser /></ProtectedRoute>}/>
-  
-      </Routes>
+        <Route path="/cart" element={<Cart />} exact="true" />
+        <Route path="/shipping" element={<ProtectedRoute><Shipping />{" "}</ProtectedRoute>}exact="true"/>
+        <Route path="/confirm" element={<ProtectedRoute><ConfirmOrder />{" "}</ProtectedRoute>}/>
+        <Route path="/payment" element={<ProtectedRoute>{" "}<Payment /></ProtectedRoute>}/>
+        <Route path="/success" element={<ProtectedRoute><OrderSuccess /></ProtectedRoute>}/>
+        <Route path="/orders/me" element={<ProtectedRoute><ListOrders /></ProtectedRoute>}/>
+        <Route path="/order/:id" element={<ProtectedRoute><OrderDetails /></ProtectedRoute>}/>
+        <Route path="/admin/orders" element={<ProtectedRoute isAdmin={true}><OrdersList/></ProtectedRoute>}/>
+        <Route path="/admin/order/:id" element={<ProtectedRoute isAdmin={true}><ProcessOrder /></ProtectedRoute>}/>
+        </Routes>
      
       <ToastContainer />
       {!loading && (!isAuthenticated || user.role !== "admin") }

@@ -20,6 +20,15 @@ import {
           allUsersReducer,
           userDetailsReducer,
         } from "./reducers/userReducers";
+import {
+          newOrderReducer,
+          myOrdersReducer,
+          orderDetailsReducer,
+          allOrdersReducer,
+          orderReducer,
+        } from "./reducers/orderReducers";
+        
+        import { cartReducer } from "./reducers/cartReducers";
 
 
 
@@ -34,6 +43,14 @@ const reducer = combineReducers({
   newProduct: newProductReducer,
   product: productReducer,
   allUsers: allUsersReducer,
+  newProduct: newProductReducer,
+  product: productReducer,
+  cart: cartReducer,
+  newOrder: newOrderReducer,
+  myOrders: myOrdersReducer,
+  orderDetails: orderDetailsReducer,
+  allOrders: allOrdersReducer,
+  order: orderReducer,
 });
 
 

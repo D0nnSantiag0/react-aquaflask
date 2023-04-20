@@ -20,6 +20,7 @@ import { useParams } from "react-router-dom";
 import { getProductDetails, clearErrors } from "../../actions/productActions";
 import { ListItem, UnorderedList } from "@chakra-ui/react";
 import { BiLeftArrowAlt, BiRightArrowAlt } from "react-icons/bi";
+import { addItemToCart } from "../../actions/cartActions";
 // import { addToCart } from "../../redux/CartReducer/action";
 // import { addToWishList } from "../../redux/WishReducer/action";
 import Navbar from "../layout/Navbar";
@@ -97,6 +98,12 @@ const ProductDetails = () => {
   //   );
 
   // };
+
+  const addToCart = () => {
+    dispatch(addItemToCart(id, quantity));
+
+    // notify("Item Added to Cart");
+  };
 
   const nextSlide = () => {
     setActiveIndex((activeIndex + 1) % product.images.length);
@@ -225,14 +232,12 @@ const ProductDetails = () => {
                 <span className="btn btn-danger minus" onClick={decreaseQty}>
                   -
                 </span>
-
                 <input
                   type="number"
                   className="form-control count d-inline"
                   value={quantity}
                   readOnly
                 />
-
                 <span className="btn btn-primary plus" onClick={increaseQty}>
                   +
                 </span>
@@ -277,8 +282,8 @@ const ProductDetails = () => {
                 bg="black"
                 color={"whitesmoke"}
                 colorScheme={"blackAlpha"}
-                disabled={!size}
-                // onClick={handleCart}
+                isDisabled={product.stock === 0}
+                onClick={addToCart}
               >
                 Add to Cart
               </Button>

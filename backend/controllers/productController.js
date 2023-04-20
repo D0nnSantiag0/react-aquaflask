@@ -5,31 +5,58 @@ const ErrorHandler = require("../utils/errorHandler");
 const cloudinary = require("cloudinary");
 
 
+// const getProducts = async (req, res, next) => {
+//   const resPerPage = 4;
+
+//   const productsCount = await Product.countDocuments();
+
+//   // console.log(productsCount,req.query,Product.find())
+
+//   // console.log(Product.find())
+
+//   const apiFeatures = new APIFeatures(Product.find(), req.query)
+//     .search()
+//     .filter();
+
+
+//   const products = await apiFeatures.query;
+//   let filteredProductsCount = products.length;
+
+//   res.status(200).json({
+//     success: true,
+//     productsCount,
+//     filteredProductsCount,
+//     resPerPage,
+//     products,
+//   });
+// };
+
 const getProducts = async (req, res, next) => {
+
   const resPerPage = 4;
-
   const productsCount = await Product.countDocuments();
-
-  // console.log(productsCount,req.query,Product.find())
-
-  // console.log(Product.find())
-
-  const apiFeatures = new APIFeatures(Product.find(), req.query)
-    .search()
-    .filter();
+    // console.log(productsCount,req.query,Product.find())
+    // console.log(Product.find().find())
+    const apiFeatures = new APIFeatures(Product.find(), req.query).search().filter()
 
 
+
+  //new codes
+  apiFeatures.pagination(resPerPage);
   const products = await apiFeatures.query;
-  let filteredProductsCount = products.length;
 
+  let filteredProductsCount = products.length;
+  // console.log(products)
   res.status(200).json({
     success: true,
     productsCount,
-    filteredProductsCount,
-    resPerPage,
     products,
-  });
+    filteredProductsCount,
+    resPerPage
+})
+
 };
+
 
 const newProduct = async (req, res, next) => {
   let images = [];

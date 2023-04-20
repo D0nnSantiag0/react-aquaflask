@@ -20,13 +20,16 @@ import {
   MenuGroup,
   MenuDivider,
   Avatar,
+  Center,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { CgProfile } from "react-icons/cg";
 import { MdOutlineFavoriteBorder } from "react-icons/md";
-import { BsCartCheck } from "react-icons/bs";
+import { BsCartCheck, BsFillGrid1X2Fill, BsReverseListColumnsReverse} from "react-icons/bs";
 import { GrLogout } from "react-icons/gr";
 import logo from "../../img/logo.png";
+import Search from "./Search";
+
 //import { FiUser } from "react-icons/fi";
 import { BsSuitHeart } from "react-icons/bs";
 import { BsBag, BsFillPersonFill } from "react-icons/bs";
@@ -71,9 +74,9 @@ const Navbar = () => {
   const handleHome = () => {
     navigate("/");
   };
-  // const handleCart = () => {
-  //   navigate("/cart");
-  // };
+  const handleCart = () => {
+    navigate("/cart");
+  };
   const handleHeart = () => {
     navigate("/wishlist");
   };
@@ -82,11 +85,9 @@ const Navbar = () => {
   };
   const logoutHandler = () => {
     dispatch(logout());
-
-   
   };
 
-  // const { cartItems } = useSelector((state) => state.cart);
+  const { cartItems } = useSelector((state) => state.cart);
   return (
     <div className="Navbar">
       <Flex fontWeight="bold" bg={colorMode === "dark" ? "none" : "#ebecec"}>
@@ -94,13 +95,20 @@ const Navbar = () => {
           <Image width={["200px"]} m={5} src={logo} alt="logo" />
         </HStack>
         <Spacer />
+        <HStack>
+        <Box>
+          <div className="col-15 col-md-15 mt-10 mt-md-0">
+          <Search />
+        </div>
+          </Box>
+          </HStack>
+
 
         <Spacer />
-
         <HStack>
           <Box onClick={handleHeart}>
             <Flex
-              // onClick={handleCart}
+              onClick={handleCart}
               alignItems={"center"}
               alignContent={"center"}
               justifyContent={"center"}
@@ -128,7 +136,7 @@ const Navbar = () => {
           </Box>
           <Box>
             <Flex
-              // onClick={handleCart}
+              onClick={handleCart}
               alignItems={"center"}
               alignContent={"center"}
               justifyContent={"center"}
@@ -143,7 +151,7 @@ const Navbar = () => {
                 bg="blue.500"
                 color="white"
               >
-                {/* {cartItems.length} */}
+                {cartItems.length}
               </Text>
             </Flex>
           </Box>
@@ -152,61 +160,69 @@ const Navbar = () => {
             <div>
               <Menu>
                 <MenuButton
-                  p="0"
-                  borderRadius={"50%"}
-                  bg="none"
-                  color="black"
                   as={Button}
+                  rounded={"full"}
+                  variant={"link"}
+                  cursor={"pointer"}
+                  minW={0}
                   colorScheme="none"
                   rightIcon={<ChevronDownIcon ml={"-15px"} fontSize={"20px"} />}
                 >
-                  <Avatar
-                    size={"sm"}
-                    name={user.length !== 0 ? user.name : ""}
-                    src={user.avatar && user.avatar.url}
-                  />
-                  <Text
-                    fontSize={"xs"}
-                    color={colorMode === "dark" ? "white" : "black"}
-                  >
-                    {user.length !== 0 ? user.name : ""}
-                  </Text>
-                </MenuButton>
-                <MenuList>
-                  <MenuGroup>
-                    <MenuItem fontWeight={"bold"}>
-                      {user.length !== 0 ? user.name : ""}
-                    </MenuItem>
-                    <MenuDivider />
-                    {user ? (
-                      <MenuItem onClick={() => navigate("/me")}>
-                        <Avatar
-                          size={"xs"}
-                          name={user.length !== 0 ? user.name : ""}
-                        />
-                        <Text fontSize={"sm"}>
-                          Profile
-                        </Text>
-                      </MenuItem>
-                    ) : (
-                      <MenuItem onClick={() => navigate("/myaccount")}>
-                        <CgProfile /> My Account
-                      </MenuItem>
-                    )}
+                  <Avatar size={"sm"} src={user.avatar && user.avatar.url} />
+                
 
-                    <MenuItem onClick={() => navigate("/wishlist")}>
-                      <MdOutlineFavoriteBorder color={"red"} />
-                      Wishlist
+                </MenuButton>
+
+                <MenuList alignItems={"center"}>
+                  <br />
+                  <Center>
+                    <Avatar size={"2xl"} src={user.avatar && user.avatar.url} />
+                  </Center>
+                  <br />
+                  <Center>
+                    <p> {user.length !== 0 ? user.name : ""}</p>
+                  </Center>
+                
+                  <MenuDivider />
+                  {user ? (
+                    <MenuItem onClick={() => navigate("/me")}>
+                      <Avatar
+                        size={"xs"}
+                        name={user.length !== 0 ? user.name : ""}
+                        src={user.avatar && user.avatar.url}
+                      />
+
+                      {/* {user.length !== 0 ? user.name : ""} */}
+                      Profile
                     </MenuItem>
-                    <MenuItem onClick={() => navigate("/cart")}>
-                      <BsCartCheck color={"blue"} />
-                      Cart
+                  ) : (
+                    <MenuItem onClick={() => navigate("/me")}>
+                      <CgProfile /> My Account
                     </MenuItem>
-                    <MenuItem onClick={logoutHandler}>
-                      <GrLogout />
-                      Logout
-                    </MenuItem>
-                  </MenuGroup>
+                  )}
+                  {user && user.role === "admin" && (
+                  <MenuItem onClick={() => navigate("/dashboard")}>
+                  <BsFillGrid1X2Fill color={"black"} />
+                  Dashboard
+                </MenuItem>
+                )}
+
+                  <MenuItem onClick={() => navigate("/orders/me")}>
+                    <BsReverseListColumnsReverse color={"blue"} />
+                    Orders
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/wishlist")}>
+                    <MdOutlineFavoriteBorder color={"red"} />
+                    Wishlist
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/cart")}>
+                    <BsCartCheck color={"blue"} />
+                    Cart
+                  </MenuItem>
+                  <MenuItem onClick={logoutHandler}>
+                    <GrLogout />
+                    Logout
+                  </MenuItem>
                 </MenuList>
               </Menu>
             </div>

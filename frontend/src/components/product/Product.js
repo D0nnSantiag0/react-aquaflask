@@ -1,4 +1,14 @@
-import { Box, Flex, HStack, Icon, Image, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  HStack,
+  Icon,
+  Image,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import { BsStar, BsStarFill, BsStarHalf } from "react-icons/bs";
+import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import { AiOutlineStar } from "react-icons/ai";
@@ -19,51 +29,73 @@ const ProductDis = ({ item }) => {
   //     setImg(images[0]);
   //   };
 
+  function Rating() {
+    return (
+      <Flex alignItems="center">
+        {Array(5)
+          .fill("")
+          .map((_, index) => {
+            const roundedRating = Math.floor(ratings * 2) / 2;
+            if (roundedRating - index >= 1) {
+              return (
+                <BsStarFill
+                  key={index}
+                  style={{ marginLeft: "1" }}
+                  color={index < ratings ? "teal.500" : "gray.300"}
+                />
+              );
+            }
+            if (roundedRating - index === 0.5) {
+              return <BsStarHalf key={index} style={{ marginLeft: "1" }} />;
+            }
+            return <BsStar key={index} style={{ marginLeft: "1" }} />;
+          })}
+        <Box as="span" ml="2" color="gray.600" fontSize="sm">
+          {numOfReviews} review{numOfReviews > 1 && "s"}
+        </Box>
+      </Flex>
+    );
+  }
+
   return (
     <div>
       <Box
         key={_id}
         width={"95%"}
         m="auto"
-        // onMouseEnter={ChangeHoverImage}
-        // onMouseLeave={OriginalImage}
+        bg={useColorModeValue("white", "gray.800")}
         onClick={handleDes}
         my={"3"}
+        borderWidth="1px"
+        rounded="lg"
+        shadow="lg"
+        position="relative"
       >
-        <Box overflow={"hidden"} position={"relative"}>
-          <Image className="imageAnimation" src={img} alt={name} />
+        <Image className="imageAnimation" src={img} alt={name} />
+
+        <Box p="6">
+          <Flex mt="1" justifyContent="space-between" alignContent="center">
+            <Box
+              fontSize={["xs", "sm", "md", "md"]}
+              fontWeight="semibold"
+              as="h4"
+              lineHeight="tight"
+              isTruncated
+            >
+              {name}
+            </Box>
+          </Flex>
+
+          <Flex justifyContent="space-between" alignContent="center">
+            <Rating rating={ratings} numReviews={numOfReviews} />
+            <Box fontSize="2xl" color={useColorModeValue("gray.800", "white")}>
+              <Box as="span" color={"gray.600"} fontSize="lg">
+                ₱
+              </Box>
+              {price.toFixed(2)}
+            </Box>
+          </Flex>
         </Box>
-        <Box
-          textAlign={"left"}
-          color={"darkgrey"}
-          fontSize={["xs", "sm", "md", "md"]}
-        >
-          <Text>{name}</Text>
-          <Text>{gender}</Text>
-          <Text>{color}</Text>
-        </Box>
-        <Flex
-          justify={"left"}
-          gap={"2rem"}
-          fontWeight={"medium"}
-          align={"center"}
-        >
-          <Text
-            as={Flex}
-            alignItems={"center"}
-            fontSize={["xs", "sm", "md", "md"]}
-          >
-            <Icon as={StarIcon} color="yellow.500" /> : {ratings}
-          </Text>
-          <Text fontSize={["xs", "sm", "md", "md"]}>
-            Review : ({numOfReviews}){" "}
-          </Text>
-        </Flex>
-        <HStack justify={"left"}>
-          <Text fontWeight={"semibold"} fontSize={["sm", "md", "lg", "xl"]}>
-            ${price}.00
-          </Text>
-        </HStack>
       </Box>
     </div>
   );

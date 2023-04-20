@@ -30,7 +30,7 @@ router
 .route("/admin/user/:id")
 .get(isAuthenticatedUser, authorizeRoles("admin"), getUserDetails)
 .put(isAuthenticatedUser, authorizeRoles("admin"), updateUser)
-.delete(isAuthenticatedUser, authorizeRoles("admin"), deleteUser);
+
 
 router
 .route("/admin/users")
@@ -38,11 +38,7 @@ router
 
 router.put("/me/update",isAuthenticatedUser,upload.single("avatar"),updateProfile);
 
-// router
-// .route("/admin/user/:id")
-// .get(isAuthenticatedUser, authorizeRoles("admin"), getUserDetails)
-// .put(isAuthenticatedUser, authorizeRoles("admin"), updateUser)
-// .delete(isAuthenticatedUser, authorizeRoles("admin"), deleteUser);
+router.route("/admin/user/:id").delete(isAuthenticatedUser, authorizeRoles("admin"), deleteUser);
 
 router.put("/password/update", isAuthenticatedUser, updatePassword);
 

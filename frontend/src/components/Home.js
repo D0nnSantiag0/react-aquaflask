@@ -6,13 +6,15 @@ import { Flex, Box, Spacer, Grid } from "@chakra-ui/react";
 import Product from "./product/Product";
 import { useMediaQuery } from "@chakra-ui/react";
 import Loading from "../components/layout/Loading";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams, useParams } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import { getProducts } from "../actions/productActions";
 import Slider, { Range, createSliderWithTooltip } from "rc-slider";
 import "rc-slider/assets/index.css";
 
-// import Paginate from "../components/Paginatation/Paginate";
+import Pagination from "react-js-pagination";
+
+import Paginate from "../components/product/Paginate";
 //import FilterChecked from "../Filter/Filters/FilterChecked";
 const Home = () => {
   const dispatch = useDispatch();
@@ -22,6 +24,7 @@ const Home = () => {
   const [price, setPrice] = useState([1, 1000]);
   const [category, setCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  let { keyword } = useParams();
 
   const categories = [
     "14oz",
@@ -59,11 +62,16 @@ const Home = () => {
     }
   }, [dispatch, alert, error, price, currentPage, category]);
 
-  // const postPerPage = 9;
-  // const totalPosts = products?.length;
-  // const indexOfLastPost = currentPage * postPerPage;
-  // const indexOfFirstPost = indexOfLastPost - postPerPage;
-  // const filterPosts = products?.slice(indexOfFirstPost, indexOfLastPost);
+  function setCurrentPageNo(pageNumber) {
+    setCurrentPage(pageNumber);
+  }
+  let count = productsCount;
+
+  if (keyword) {
+    let count = filteredProductsCount;
+  }
+  console.log(keyword, count, filteredProductsCount, resPerPage);
+
   return (
     <div className="AllProducts">
       {loading ? (
@@ -89,16 +97,31 @@ const Home = () => {
                 })}
             </Grid>
           </Box>
+          {/* {resPerPage <= count && (
+            <div className="d-flex justify-content-center mt-5">
+              <Pagination
+                activePage={currentPage}
+                itemsCountPerPage={resPerPage}
+                totalItemsCount={productsCount}
+                onChange={setCurrentPageNo}
+                nextPageText={"Next"}
+                prevPageText={"Prev"}
+                firstPageText={"First"}
+                lastPageText={"Last"}
+                itemClass="page-item"
+                linkClass="page-link"
+              />
+            </div>
+          )} */}
         </Flex>
-        /* {totalPosts > postPerPage && (
-            <Paginate
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-              totalPosts={totalPosts}
-              postPerPage={postPerPage}
-            />
-          )}
-        </> */
+        //  {totalPosts > postPerPage && (
+        //     <Paginate
+        //       currentPage={currentPage}
+        //       setCurrentPage={setCurrentPage}
+        //       totalPosts={totalPosts}
+        //       postPerPage={postPerPage}
+        //     />
+        //   )}
       )}
     </div>
   );
