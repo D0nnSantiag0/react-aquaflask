@@ -67,7 +67,7 @@ const OrderDetails = () => {
       <div class="col-lg-10 col-xl-8">
         <div class="card" style={{borderradius: '10px'}}>
           <div class="card-header px-4 py-5">
-            <h5 class="text-muted mb-0"><span style={{color: '#a8729a'}}>Hello, {user.name !== undefined && user.name}</span>!</h5>
+            <h5 class="text-muted mb-0"><span style={{color: '#a8729a'}}>Hello, {user !== undefined && user.name}</span>!</h5>
           </div>
           <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">

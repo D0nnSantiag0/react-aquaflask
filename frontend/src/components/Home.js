@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,Fragment } from "react";
 import { useSelector, useDispatch } from "react-redux";
-// import FilterData from "../Filter/Filters/FilterData";
-// import { getData } from "../redux/DataReducer/action";
-import { Flex, Box, Spacer, Grid } from "@chakra-ui/react";
+import { Flex, Box, Spacer, Grid, ColorModeProvider } from "@chakra-ui/react";
 import Product from "./product/Product";
 import { useMediaQuery } from "@chakra-ui/react";
 import Loading from "../components/layout/Loading";
@@ -11,35 +9,38 @@ import Navbar from "../components/layout/Navbar";
 import { getProducts } from "../actions/productActions";
 import Slider, { Range, createSliderWithTooltip } from "rc-slider";
 import "rc-slider/assets/index.css";
-
 import Pagination from "react-js-pagination";
 
-import Paginate from "../components/product/Paginate";
-//import FilterChecked from "../Filter/Filters/FilterChecked";
+
+
 const Home = () => {
   const dispatch = useDispatch();
-  //   const products = useSelector((store) => store?.dataReducer?.products);
   const createSliderWithToolTip = Slider.createSliderWithToolTip;
   const Range = createSliderWithTooltip(Slider.Range);
   const [price, setPrice] = useState([1, 1000]);
-  const [category, setCategory] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  let { keyword } = useParams();
+  const [color, setColor] = useState("");
+  const [size,setSize] = useState("");
 
-  const categories = [
-    "14oz",
-    "18oz",
-    "22oz",
-    "32oz",
-    "40oz",
-    "64oz",
-    "Reds",
-    "Blues",
-    "Greens",
-    "Pinks",
-    "Purples",
-    "Accessories",
-  ];
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLargerThan] = useMediaQuery("(min-width: 768px)");
+
+    const colors = [
+      "Reds",
+      "Blues",
+      "Greens",
+      "Pinks",
+      "Purples",
+  ]
+
+  const sizes = [
+      "14oz",
+      "18oz",
+      "22oz",
+      "32oz",
+      "40oz",
+      "64oz",
+  ]
+
 
   const {
     loading,
@@ -50,54 +51,107 @@ const Home = () => {
     filteredProductsCount,
   } = useSelector((state) => state.products);
 
-  const [searchParams] = useSearchParams();
-  // const [currentPage, setCurrentPage] = useState(1);
-  const location = useLocation();
-  const [isLargerThan] = useMediaQuery("(min-width: 768px)");
+  let { keyword } = useParams();
 
   useEffect(() => {
-    dispatch(getProducts(currentPage, price, category));
+    dispatch(getProducts(keyword, currentPage, price, color));
     if (error) {
       return alert.error(error);
     }
-  }, [dispatch, alert, error, price, currentPage, category]);
+  }, [dispatch, alert, error, keyword, price, currentPage, color]);
 
   function setCurrentPageNo(pageNumber) {
     setCurrentPage(pageNumber);
   }
-  let count = productsCount;
 
+  let count = productsCount;
   if (keyword) {
-    let count = filteredProductsCount;
+    count = filteredProductsCount;
   }
-  console.log(keyword, count, filteredProductsCount, resPerPage);
 
   return (
     <div className="AllProducts">
+      <h1>ALL PRODUCT</h1>
       {loading ? (
         <Loading />
-      ) : (
-        // <>
+        ) : (
+          <Fragment>
         <Flex flexDirection={isLargerThan ? "row" : "column"}>
-          {/* <Box w={isLargerThan ? "15%" : "100%"}>
-            <FilterData />
-            <FilterChecked/>
-          </Box> */}
-          {/* <Spacer /> */}
           <Box width={isLargerThan ? "100%" : "100%"}>
-            <Grid
-              templateColumns={
-                isLargerThan ? "repeat(4, 1fr)" : "repeat(2, 1fr)"
-              }
-              gap={"5px"}
-            >
-              {products?.length > 0 &&
+          <div className="row">
+              {keyword ? (
+                <Fragment>
+                  <div className="col-6 col-md-3 mt-5 mb-5">
+                    <div className="px-5">
+                      <Range
+                        marks={{
+                          1: `$1`,
+                          1000: `$1000`,
+                        }}
+                        min={1}
+                        max={1000}
+                        defaultValue={[1, 1000]}
+                        tipFormatter={(value) => `$${value}`}
+                        tipProps={{
+                          placement: "top",
+                          visible: true,
+                        }}
+                        value={price}
+                        onChange={(price) => setPrice(price)}
+                      />
+                      <hr className="my-5" />
+                      <div className="mt-5">
+                        <h4 className="mb-3">Colors</h4>
+                        <ul className="pl-0">
+                          {colors.map((color) => (
+                            <li
+                              style={{
+                                cursor: "pointer",
+                                listStyleType: "none",
+                              }}
+                              key={color}
+                              onClick={() => setColor(color)}
+                            >
+                              {color}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-6 col-md-9">
+                    <div className="row">
+                      <br/>
+                  {products?.length > 0 &&
+                    products?.map((item) => {
+                    return <Product key={item.key} item={item} />;
+                  })}
+                    </div>
+                  </div>
+
+                </Fragment>
+              ) : (
+             
+                <Grid
+                templateColumns={
+                  isLargerThan ? "repeat(4, 1fr)" : "repeat(2, 1fr)"
+                }
+                gap={"5px"}
+              >
+               {products?.length > 0 &&
                 products?.map((item) => {
+                  <br/>
                   return <Product key={item.key} item={item} />;
                 })}
-            </Grid>
-          </Box>
-          {/* {resPerPage <= count && (
+              </Grid>
+               
+              )}
+            </div>
+          
+            </Box>
+
+            <Box>
+            {resPerPage <= count && (
             <div className="d-flex justify-content-center mt-5">
               <Pagination
                 activePage={currentPage}
@@ -112,16 +166,14 @@ const Home = () => {
                 linkClass="page-link"
               />
             </div>
-          )} */}
+        
+          )}
+            
+            </Box>
+          
+         
         </Flex>
-        //  {totalPosts > postPerPage && (
-        //     <Paginate
-        //       currentPage={currentPage}
-        //       setCurrentPage={setCurrentPage}
-        //       totalPosts={totalPosts}
-        //       postPerPage={postPerPage}
-        //     />
-        //   )}
+        </Fragment>
       )}
     </div>
   );

@@ -1,29 +1,15 @@
 import React, { Fragment, useEffect } from "react";
-import {
-    Box,
-  } from "@chakra-ui/react";
-
+import {Box,} from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
-
 import { MDBDataTable } from "mdbreact";
-
 import MetaData from "../layout/MetaData";
-
 import Loader from "../layout/Loader";
-
 import Sidebar from "./Sidebar";
-
 import Button from 'react-bootstrap/Button';
-
-
 import { useDispatch, useSelector } from "react-redux";
-
 import { toast } from "react-toastify";
-
 import "react-toastify/dist/ReactToastify.css";
-
 import { Carousel } from "react-bootstrap";
-
 import {
     getAdminProducts,
     clearErrors,
