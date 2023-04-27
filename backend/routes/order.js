@@ -4,14 +4,9 @@ const router = express.Router();
 
 const {
   newOrder,getSingleOrder,
-
-  myOrders,
-
-  allOrders,
-
-  updateOrder,
-
-  deleteOrder,
+  myOrders,allOrders,
+  updateOrder,deleteOrder,
+  salesPerMonth, salesPerYear
 } = require("../controllers/orderController");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
@@ -30,5 +25,13 @@ router
 router
   .route("/admin/order/:id")
   .delete(isAuthenticatedUser, authorizeRoles("admin"), deleteOrder);
+
+router.get('/orders/sales-per-month', salesPerMonth);
+router.get('/orders/sales-per-year', salesPerYear);
+
+
+  // router.
+  // route('/orders/sales-per-month')
+  // get(isAuthenticatedUser, authorizeRoles("admin"),salesPerMonth);
 
 module.exports = router;

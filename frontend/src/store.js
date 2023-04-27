@@ -27,8 +27,8 @@ import {
           allOrdersReducer,
           orderReducer,
         } from "./reducers/orderReducers";
-        
-        import { cartReducer } from "./reducers/cartReducers";
+import { cartReducer } from "./reducers/cartReducers";
+import { salesPerMonthReducer, salesPerYearReducer, productSalesReducer } from './reducers/chartReducers';
 
 
 
@@ -51,6 +51,10 @@ const reducer = combineReducers({
   orderDetails: orderDetailsReducer,
   allOrders: allOrdersReducer,
   order: orderReducer,
+  salesPerMonth: salesPerMonthReducer,
+  salesPerYear: salesPerYearReducer,
+  productSales: productSalesReducer,
+
 });
 
 

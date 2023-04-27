@@ -4,21 +4,30 @@ import { Link } from "react-router-dom";
 import MetaData from "../layout/MetaData";
 import Loader from "../layout/Loader";
 import Sidebar from "./Sidebar";
+import MonthlySalesChart from './MonthlySalesChart';
+import YearlySalesChart from './YearlySalesChart';
+import ProductSalesChart from './ProductSalesChart';
 
 import { useDispatch, useSelector } from "react-redux";
 
 import { getAdminProducts } from "../../actions/productActions";
-// import { allOrders } from "../../actions/orderActions";
+import { allOrders } from "../../actions/orderActions";
 import { allUsers } from "../../actions/userActions";
+import { monthlySalesChart,yearlySalesChart, productSalesChart } from '../../actions/chartActions'
 
 const Dashboard = () => {
   const dispatch = useDispatch();
 
   const { products } = useSelector((state) => state.products);
   const { users } = useSelector((state) => state.allUsers);
-//   const { orders, totalAmount, loading } = useSelector(
-//     (state) => state.allOrders
-//   );
+  const { salesPerMonth, } = useSelector(state => state.salesPerMonth)
+  const { salesPerYear, } = useSelector(state => state.salesPerYear)
+  const { productSales, } = useSelector(state => state.productSales)
+
+
+  const { orders, totalAmount, loading } = useSelector(
+    (state) => state.allOrders
+  );
 
 let outOfStock = 0;
 products?.forEach((product) => {
@@ -29,8 +38,12 @@ products?.forEach((product) => {
 
   useEffect(() => {
     dispatch(getAdminProducts());
-    // dispatch(allOrders());
+    dispatch(allOrders());
     dispatch(allUsers());
+    dispatch(monthlySalesChart())
+    dispatch(yearlySalesChart())
+    dispatch(productSalesChart())
+
   }, [dispatch]);
 
   return (
@@ -53,7 +66,7 @@ products?.forEach((product) => {
             <Fragment>
               <MetaData title={"Admin Dashboard"} />
 
-              {/* <div className="row pr-4">
+              <div className="row pr-4">
                 <div className="col-xl-12 col-sm-12 mb-3">
                   <div className="card text-white bg-primary o-hidden h-100">
                     <div className="card-body">
@@ -64,7 +77,7 @@ products?.forEach((product) => {
                     </div>
                   </div>
                 </div>
-              </div> */}
+              </div>
 
               <div className="row pr-4">
                 <div className="col-xl-3 col-sm-6 mb-3">
@@ -87,7 +100,7 @@ products?.forEach((product) => {
                   </div>
                 </div>
 
-                {/* <div className="col-xl-3 col-sm-6 mb-3">
+                <div className="col-xl-3 col-sm-6 mb-3">
                   <div className="card text-white bg-danger o-hidden h-100">
                     <div className="card-body">
                       <div className="text-center card-font-size">
@@ -105,7 +118,7 @@ products?.forEach((product) => {
                       </span>
                     </Link>
                   </div>
-                </div> */}
+                </div>
 
                 <div className="col-xl-3 col-sm-6 mb-3">
                   <div className="card text-white bg-info o-hidden h-100">
@@ -143,6 +156,20 @@ products?.forEach((product) => {
           )}
         </div>
       </div>
+      <Fragment>
+        <h1>MONTHLY SALES</h1>
+        <MonthlySalesChart data={salesPerMonth} />
+        </Fragment>
+
+        <Fragment>
+        <h1>YEARLY SALES</h1>
+        <YearlySalesChart data={salesPerYear} />
+        </Fragment>
+
+        <Fragment>
+        <h1>PRODUCT SALES</h1>
+          <ProductSalesChart data={productSales} />
+        </Fragment>
     
     </Fragment>
   );

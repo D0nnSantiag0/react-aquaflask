@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const APIFeatures = require("../utils/apiFeatures.js");
 const ErrorHandler = require("../utils/errorHandler");
 const cloudinary = require("cloudinary");
+const Order = require('../models/order')
 
 
 // const getProducts = async (req, res, next) => {
@@ -206,11 +207,62 @@ const deleteProduct = async (req, res, next) => {
 };
 
 
+const productSales = async (req, res, next) => {
+  const totalSales = await Order.aggregate([
+      {
+          $group: {
+              _id: null,
+              total: { $sum: "$itemsPrice" }
+
+          },
+      },
+  ])
+  const sales = await Order.aggregate([
+      { $project: { _id: 0, "orderItems": 1, totalPrice: 1 } },
+      { $unwind: "$orderItems" },
+      {
+          $group: {
+              // _id: {month: { $month: "$paidAt" } },
+              _id: { product: "$orderItems.name" },
+              // total: {$sum: {$multiply: [ "$orderItemsprice", "$orderItemsquantity" ]}}
+              total: { $sum: { $multiply: ["$orderItems.price", "$orderItems.quantity"] } }
+          },
+      },
+  ])
+  
+  if (!totalSales) {
+      return next(new ErrorHandler('error sales ', 404))
+  }
+  if (!sales) {
+      return next(new ErrorHandler('error sales ', 404))
+  }
+  let totalPercentage = {}
+  totalPercentage = sales.map(item => {
+       
+      console.log( ((item.total/totalSales[0].total) * 100).toFixed(2))
+      percent = Number (((item.total/totalSales[0].total) * 100).toFixed(2))
+      total =  {
+          name: item._id.product,
+          percent
+      }
+      return total
+  }) 
+  // return console.log(totalPercentage)
+  res.status(200).json({
+      success: true,
+      totalPercentage,
+  })
+
+}
+
+
+
 module.exports = {
   getProducts,
   newProduct,
   getSingleProduct,
   getAdminProducts,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  productSales
 };

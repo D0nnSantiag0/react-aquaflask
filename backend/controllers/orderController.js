@@ -128,21 +128,8 @@ async function updateStock(id, quantity) {
 }
 
 exports.deleteOrder = async (req, res, next) => {
-  // const order = await Order.findById(req.params.id);
 
-  // if (!order) {
-  //   return next(new ErrorHandler("No Order found with this ID", 404));
-  // }
-
-  // await order.remove();
-
-  // res.status(200).json({
-  //   success: true,
-  // });
   const { id } = req.params;
-
-  // if (!mongoose.Types.ObjectId.isValid(id))
-  //   return res.status(404).json({ success: false, message: "Invalid ID" });
 
   const order = await Order.findOneAndDelete({ _id: id });
 
@@ -158,7 +145,6 @@ exports.salesPerMonth = async (req, res, next) => {
   const salesPerMonth = await Order.aggregate([
       {
           $group: {
-              // _id: {month: { $month: "$paidAt" } },
               _id: { year: { $year: "$paidAt" }, month: { $month: "$paidAt" } },
               total: { $sum: "$totalPrice" },
           },
@@ -201,50 +187,74 @@ exports.salesPerMonth = async (req, res, next) => {
   })
 
 }
+// exports.salesPerYear = async (req, res, next) => {
+//   const salesPerYear= await Order.aggregate([
+//       {
+//           $group: {
+//               _id: { year: { $year: "$paidAt" }},
+//               total: { $sum: "$totalPrice" },
+//           },
+//       },
 
-exports.salesPerYear = async (req, res, next) => {
-  const salesPerYear= await Order.aggregate([
-      {
-          $group: {
-              // _id: {month: { $month: "$paidAt" } },
-              _id: { year: { $year: "$paidAt" }},
-              total: { $sum: "$totalPrice" },
-          },
-      },
-
-      {
-          $addFields: {
-              month: {
-                  $let: {
-                      vars: {
-                          monthsInString: [, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', ' Sept', 'Oct', 'Nov', 'Dec']
-                      },
-                      in: {
-                          $arrayElemAt: ['$$monthsInString', "$_id.month"]
-                      }
-                  }
-              }
-          }
-      },
-      { $sort: { "_id.month": 1 } },
-      {
-          $project: {
-              _id: 1,
-              month: 1,
+//       {
+//           $addFields: {
+//               month: {
+//                   $let: {
+//                       vars: {
+//                           monthsInString: [, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', ' Sept', 'Oct', 'Nov', 'Dec']
+//                       },
+//                       in: {
+//                           $arrayElemAt: ['$$monthsInString', "$_id.month"]
+//                       }
+//                   }
+//               }
+//           }
+//       },
+//       { $sort: { "_id.month": 1 } },
+//       {
+//           $project: {
+//               _id: 1,
+//               year: 1,
              
-              total: 1,
+//               total: 1,
 
-          }
-      }
+//           }
+//       }
 
-  ])
+//   ])
+//   if (!salesPerYear) {
+//       return next(new ErrorHandler('error sales per month', 404))
+
+//   }
+//   // return console.log(customerSales)
+//   res.status(200).json({
+//       success: true,
+//       salesPerYear
+//   })
+// }
+exports.salesPerYear = async (req, res, next) => {
+  const salesPerYear = await Order.aggregate([
+    {
+      $group: {
+        _id: { $year: "$paidAt" },
+        total: { $sum: "$totalPrice" },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        year: "$_id",
+        total: 1,
+      },
+    },
+    { $sort: { year: 1 } },
+  ]);
   if (!salesPerYear) {
-      return next(new ErrorHandler('error sales per month', 404))
-
+    return next(new ErrorHandler("error sales per year", 404));
   }
-  // return console.log(customerSales)
   res.status(200).json({
-      success: true,
-      salesPerMonth
-  })
-}
+    success: true,
+    salesPerYear,
+  });
+};
+

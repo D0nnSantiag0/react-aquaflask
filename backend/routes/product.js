@@ -13,7 +13,8 @@ const {
   getSingleProduct,
   getAdminProducts,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  productSales
 } = require("../controllers/productController");
 
 router.route("/products").get(getProducts);
@@ -24,6 +25,8 @@ router.get("/admin/products", isAuthenticatedUser, getAdminProducts);
 router.post("/admin/product/new",isAuthenticatedUser,authorizeRoles("admin"),upload.array("images", 10),newProduct);
 router.route("/admin/product/:id").put(isAuthenticatedUser,authorizeRoles("admin"),upload.array("images", 10),updateProduct);
 router.route("/admin/product/:id").put(updateProduct).delete(deleteProduct);
+router.route('/admin/products/sales').get(productSales);
+
 // router.route("/admin/product/:id").delete(isAuthenticatedUser,authorizeRoles("admin"),deleteProduct);
 
 
