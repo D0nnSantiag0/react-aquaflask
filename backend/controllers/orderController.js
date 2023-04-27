@@ -153,3 +153,98 @@ exports.deleteOrder = async (req, res, next) => {
 
   res.status(200).json({ success: true, message: "Order deleted" });
 };
+
+exports.salesPerMonth = async (req, res, next) => {
+  const salesPerMonth = await Order.aggregate([
+      {
+          $group: {
+              // _id: {month: { $month: "$paidAt" } },
+              _id: { year: { $year: "$paidAt" }, month: { $month: "$paidAt" } },
+              total: { $sum: "$totalPrice" },
+          },
+      },
+
+      {
+          $addFields: {
+              month: {
+                  $let: {
+                      vars: {
+                          monthsInString: [, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', ' Sept', 'Oct', 'Nov', 'Dec']
+                      },
+                      in: {
+                          $arrayElemAt: ['$$monthsInString', "$_id.month"]
+                      }
+                  }
+              }
+          }
+      },
+      { $sort: { "_id.month": 1 } },
+      {
+          $project: {
+              _id: 1,
+              month: 1,
+             
+              total: 1,
+
+          }
+      }
+
+  ])
+  if (!salesPerMonth) {
+      return next(new ErrorHandler('error sales per month', 404))
+
+  }
+  // return console.log(customerSales)
+  res.status(200).json({
+      success: true,
+      salesPerMonth
+  })
+
+}
+
+exports.salesPerYear = async (req, res, next) => {
+  const salesPerYear= await Order.aggregate([
+      {
+          $group: {
+              // _id: {month: { $month: "$paidAt" } },
+              _id: { year: { $year: "$paidAt" }},
+              total: { $sum: "$totalPrice" },
+          },
+      },
+
+      {
+          $addFields: {
+              month: {
+                  $let: {
+                      vars: {
+                          monthsInString: [, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', ' Sept', 'Oct', 'Nov', 'Dec']
+                      },
+                      in: {
+                          $arrayElemAt: ['$$monthsInString', "$_id.month"]
+                      }
+                  }
+              }
+          }
+      },
+      { $sort: { "_id.month": 1 } },
+      {
+          $project: {
+              _id: 1,
+              month: 1,
+             
+              total: 1,
+
+          }
+      }
+
+  ])
+  if (!salesPerYear) {
+      return next(new ErrorHandler('error sales per month', 404))
+
+  }
+  // return console.log(customerSales)
+  res.status(200).json({
+      success: true,
+      salesPerMonth
+  })
+}
