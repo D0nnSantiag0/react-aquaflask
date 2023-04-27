@@ -6,6 +6,10 @@ import MetaData from "../layout/MetaData";
 
 import Loader from "../layout/Loader";
 
+import { PDFDownloadLink } from "@react-pdf/renderer";
+
+import Invoice from "./OrderPDF";
+
 import Sidebar from "./Sidebar";
 
 import { toast } from "react-toastify";
@@ -187,6 +191,15 @@ const ProcessOrder = () => {
                 </div>
 
                 <div className="col-12 col-lg-3 mt-5">
+                {order.orderStatus === "Delivered" && (
+                  <PDFDownloadLink
+                    document={<Invoice order={order} />}
+                    fileName={`invoice_${order._id}.pdf`}
+                    className="btn btn-primary btn-block"
+                  >
+                    Download Invoice
+                  </PDFDownloadLink>
+                )}
                   <h4 className="my-4">Status</h4>
 
                   <div className="form-group">
@@ -212,6 +225,9 @@ const ProcessOrder = () => {
                   </button>
                 </div>
               </div>
+        
+
+
             )}
           </Fragment>
         </div>
