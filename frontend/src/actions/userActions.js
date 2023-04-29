@@ -1,5 +1,8 @@
 import axios from 'axios'
 import {
+    GOOGLE_LOGIN_REQUEST,
+    GOOGLE_LOGIN_SUCCESS,
+    GOOGLE_LOGIN_FAIL,
     LOGIN_REQUEST,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
@@ -68,6 +71,33 @@ export const login = (email, password) => async (dispatch) => {
         })
     }
 }
+
+export const glogin = (response) => async (dispatch) => {
+    console.log(response);
+    try {
+      dispatch({ type: GOOGLE_LOGIN_REQUEST });
+      const { data } = await axios.post(`${process.env.REACT_APP_API}/api/v1/googlelogin`,
+        { response },
+        { withCredentials: true }
+      );
+  
+      console.log(data)
+      localStorage.setItem("user", JSON.stringify(data.user));
+      dispatch({
+        type: GOOGLE_LOGIN_SUCCESS,
+  
+        payload: data.user,
+  
+      });
+    
+    } catch (error) {
+      dispatch({
+        type: GOOGLE_LOGIN_FAIL,
+  
+        payload: error.response.data.errMessage,
+      });
+    }
+  };
 
 export const register = (userData) => async (dispatch) => {
     try {

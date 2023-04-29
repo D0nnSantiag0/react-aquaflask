@@ -1,4 +1,7 @@
 import {
+    GOOGLE_LOGIN_REQUEST,
+    GOOGLE_LOGIN_SUCCESS,
+    GOOGLE_LOGIN_FAIL,
     LOGIN_REQUEST,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
@@ -56,6 +59,7 @@ import {
     switch (action.type) {
         case REGISTER_USER_REQUEST:
         case LOGIN_REQUEST:
+        case GOOGLE_LOGIN_REQUEST:
         case LOAD_USER_REQUEST:
             return {
                 loading: true,
@@ -63,6 +67,7 @@ import {
             }
         case REGISTER_USER_SUCCESS:
         case LOGIN_SUCCESS:
+        case GOOGLE_LOGIN_SUCCESS:
         case LOAD_USER_SUCCESS:
             return {
                 ...state,
@@ -72,6 +77,7 @@ import {
             }
         case REGISTER_USER_FAIL:
         case LOGIN_FAIL:
+        case GOOGLE_LOGIN_FAIL:
         case LOAD_USER_FAIL:
             return {
                 

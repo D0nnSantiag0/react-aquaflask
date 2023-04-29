@@ -14,7 +14,8 @@ const {
   getAdminProducts,
   updateProduct,
   deleteProduct,
-  productSales
+  productSales,
+  createProductReview,
 } = require("../controllers/productController");
 
 router.route("/products").get(getProducts);
@@ -26,8 +27,6 @@ router.post("/admin/product/new",isAuthenticatedUser,authorizeRoles("admin"),upl
 router.route("/admin/product/:id").put(isAuthenticatedUser,authorizeRoles("admin"),upload.array("images", 10),updateProduct);
 router.route("/admin/product/:id").put(updateProduct).delete(deleteProduct);
 router.route('/admin/products/sales').get(productSales);
-
-// router.route("/admin/product/:id").delete(isAuthenticatedUser,authorizeRoles("admin"),deleteProduct);
-
+router.put("/review", isAuthenticatedUser, createProductReview);
 
 module.exports = router;

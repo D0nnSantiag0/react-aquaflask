@@ -307,5 +307,6 @@ module.exports = {
   getAdminProducts,
   updateProduct,
   deleteProduct,
-  productSales
+  productSales,
+  createProductReview
 };

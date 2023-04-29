@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
   phone: {
     type: String,
 
-    required: [true, "Please enter your phone number"],
+    required: [false, "Please enter your phone number"],
 
     maxLength: [11, "Your phone number cannot exceed 11 characters"],
   },
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
   address: {
     type: String,
 
-    required: [true, "Please enter your address"],
+    required: [false, "Please enter your address"],
 
     maxLength: [100, "Your address cannot exceed 30 characters"],
   },
@@ -70,6 +70,12 @@ const userSchema = new mongoose.Schema({
     type: String,
 
     default: "user",
+  },
+  
+  googleId: {
+    type: String,
+    
+    required: false
   },
 
   createdAt: {
@@ -123,5 +129,6 @@ userSchema.methods.getResetPasswordToken = function () {
 
   return resetToken;
 };
+
 
 module.exports = mongoose.model("User", userSchema);

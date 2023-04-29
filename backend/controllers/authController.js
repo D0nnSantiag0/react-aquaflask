@@ -64,21 +64,16 @@ exports.registerUser = async (req, res, next) => {
 exports.loginUser = async (req, res, next) => {
   const { email, password } = req.body;
 
-  // Checks if email and password is entered by user
-
   if (!email || !password) {
     return next(new ErrorHandler("Please enter email & password", 400));
   }
 
-  // Finding user in database
-
+ 
   const user = await User.findOne({ email }).select("+password");
 
   if (!user) {
     return next(new ErrorHandler("Invalid Email or Password", 401));
   }
-
-  // Checks if password is correct or not
 
   const isPasswordMatched = await user.comparePassword(password);
 
@@ -88,6 +83,30 @@ exports.loginUser = async (req, res, next) => {
 
 
   sendToken(user, 200, res);
+};
+
+exports.googlelogin = async (req, res, next) => {
+
+  console.log(req.body.response);
+  const userfind = await User.findOne({ googleId: req.body.response.id })
+  if (!userfind) {
+    let createuser = await User.create({
+      name: req.body.response.name,
+      email: req.body.response.email,
+      password: 'password',
+      avatar: {
+        public_id: 'avatars/rjeu182thkednbnlitqc',
+        url: req.body.response.picture,
+      },
+      googleId: req.body.response.id
+    });
+    var user = await User.findOne({ googleId: createuser.googleId })
+    sendToken(user, 200, res);
+  }
+  else {
+    const user = await User.findOne({ googleId: req.body.response.id })
+    sendToken(user, 200, res);
+  }
 };
 
 exports.logout = async (req, res, next) => {

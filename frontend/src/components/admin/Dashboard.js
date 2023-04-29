@@ -1,162 +1,260 @@
 import React, { Fragment, useEffect } from "react";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 import MetaData from "../layout/MetaData";
 import Loader from "../layout/Loader";
 import Sidebar from "./Sidebar";
-import MonthlySalesChart from './MonthlySalesChart';
-import YearlySalesChart from './YearlySalesChart';
-import ProductSalesChart from './ProductSalesChart';
 
 import { useDispatch, useSelector } from "react-redux";
 
 import { getAdminProducts } from "../../actions/productActions";
 import { allOrders } from "../../actions/orderActions";
+// import UserSalesChart from "./UserSalesChart";
+import MonthlySalesChart from "./MonthlySalesChart";
+import ProductSalesChart from "./ProductSalesChart";
+import YearlySalesChart from './YearlySalesChart';
+
 import { allUsers } from "../../actions/userActions";
-import { monthlySalesChart,yearlySalesChart, productSalesChart } from '../../actions/chartActions'
+import { BsPerson, BsBag, BsFolder2, BsFillCartXFill } from "react-icons/bs";
+import { MdAttachMoney } from "react-icons/md";
+import {
+  Box,
+  Text,
+  Button,
+  SimpleGrid,
+  Stat,
+  StatLabel,
+  StatNumber,
+  useColorModeValue,
+  Flex,
+} from "@chakra-ui/react";
+import { AiOutlineTeam, AiOutlineHome } from "react-icons/ai";
+import {
+  monthlySalesChart,
+  productSalesChart,
+  yearlySalesChart
+} from "../../actions/chartActions";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-
   const { products } = useSelector((state) => state.products);
   const { users } = useSelector((state) => state.allUsers);
-  const { salesPerMonth, } = useSelector(state => state.salesPerMonth)
-  const { salesPerYear, } = useSelector(state => state.salesPerYear)
-  const { productSales, } = useSelector(state => state.productSales)
-
-
   const { orders, totalAmount, loading } = useSelector(
     (state) => state.allOrders
   );
 
-let outOfStock = 0;
-products?.forEach((product) => {
-  if (product.stock === 0) {
-    outOfStock += 1;
-  }
-});
+  // const { customerSales } = useSelector((state) => state.customerSales);
+  const { salesPerMonth } = useSelector((state) => state.salesPerMonth);
+  const { productSales } = useSelector((state) => state.productSales);
+  const { salesPerYear, } = useSelector(state => state.salesPerYear)
+
+  let outOfStock = 0;
+  products.forEach((product) => {
+    if (product.stock === 0) {
+      outOfStock += 1;
+    }
+  });
 
   useEffect(() => {
     dispatch(getAdminProducts());
     dispatch(allOrders());
     dispatch(allUsers());
-    dispatch(monthlySalesChart())
+    // dispatch(userSales());
+    dispatch(monthlySalesChart());
+    dispatch(productSalesChart());
     dispatch(yearlySalesChart())
-    dispatch(productSalesChart())
-
   }, [dispatch]);
-
+  let navigate = useNavigate();
   return (
     <Fragment>
       <div className="row">
+        <Box align="center" width={["95%", "90%", "80%", "85%"]} m="auto">
+          <div className="col-12 col-md-10">
+            <h1 className="my-4">Dashboard</h1>
 
-        <div className="col-12 col-md-10">
-          <h1>ADMIN DASHBOARD</h1>
-        </div>
-          
-       <div className="col-12 col-md-3">
-          <Sidebar />
-        </div>
+            {loading ? (
+              <Loader />
+            ) : (
+              <Fragment>
+                <MetaData title={"Admin Dashboard"} />
 
-        <div className="col-10 col-md-8">
+                <Box
+                  maxW="7xl"
+                  mx={"auto"}
+                  pt={5}
+                  px={{ base: 2, sm: 12, md: 17 }}>
+                  <SimpleGrid
+                    columns={{ base: 1, md: 1 }}
+                    spacing={{ base: 5, lg: 8 }}>
+                    <Stat
+                      px={{ base: 2, md: 4 }}
+                      py={"5"}
+                      shadow={"xl"}
+                      border={"1px solid"}
+                      // borderColor={useColorModeValue("gray.800", "gray.500")}
+                      rounded={"lg"}>
+                      <Flex justifyContent={"space-between"}>
+                        <Box pl={{ base: 2, md: 4 }}>
+                          <StatLabel fontWeight={"medium"} isTruncated>
+                            Total Amount
+                          </StatLabel>
+                          <StatNumber fontSize={"2xl"} fontWeight={"medium"}>
+                            ${totalAmount && totalAmount.toFixed(2)}
+                          </StatNumber>
+                        </Box>
+                        <Box
+                          my={"auto"}
+                          // bg={useColorModeValue("gray.800", "gray.200")}
+                          alignContent={"center"}>
+                          <MdAttachMoney size={"3em"} />
+                        </Box>
+                      </Flex>
+                    </Stat>
+                  </SimpleGrid>
 
-          {false ? (
-            <Loader />
-          ) : (
-            <Fragment>
-              <MetaData title={"Admin Dashboard"} />
+                  <br />
+                  <SimpleGrid
+                    columns={{ base: 1, md: 4 }}
+                    spacing={{ base: 5, lg: 8 }}>
+                    <Stat
+                      px={{ base: 2, md: 4 }}
+                      py={"5"}
+                      shadow={"xl"}
+                      border={"1px solid"}
+                      // borderColor={useColorModeValue("gray.800", "gray.500")}
+                      rounded={"lg"}>
+                      <Flex justifyContent={"space-between"}>
+                        <Box pl={{ base: 2, md: 4 }}>
+                          <StatLabel fontWeight={"medium"} isTruncated>
+                            Products
+                          </StatLabel>
+                          <StatNumber fontSize={"2xl"} fontWeight={"medium"}>
+                            {products && products.length}
+                          </StatNumber>
+                        </Box>
+                        <Box
+                          my={"auto"}
+                          // bg={useColorModeValue("gray.800", "gray.200")}
+                          alignContent={"center"}>
+                          <BsFolder2 size={"3em"} />
+                        </Box>
+                      </Flex>
+                      <Box textAlign="right" mt={3}>
+                        <Text
+                          fontSize="sm"
+                          fontWeight="bold"
+                          cursor="pointer"
+                          onClick={() => navigate("/admin/products")}>
+                          View Details
+                        </Text>
+                      </Box>
+                    </Stat>
 
-              <div className="row pr-4">
-                <div className="col-xl-12 col-sm-12 mb-3">
-                  <div className="card text-white bg-primary o-hidden h-100">
-                    <div className="card-body">
-                      <div className="text-center card-font-size">
-                        Total Amount
-                        <br /> <b>${totalAmount && totalAmount.toFixed(2)}</b>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                    <Stat
+                      px={{ base: 2, md: 4 }}
+                      py={"5"}
+                      shadow={"xl"}
+                      border={"1px solid"}
+                      // borderColor={useColorModeValue("gray.800", "gray.500")}
+                      rounded={"lg"}>
+                      <Flex justifyContent={"space-between"}>
+                        <Box pl={{ base: 2, md: 4 }}>
+                          <StatLabel fontWeight={"medium"} isTruncated>
+                            Orders
+                          </StatLabel>
+                          <StatNumber fontSize={"2xl"} fontWeight={"medium"}>
+                            {orders && orders.length}
+                          </StatNumber>
+                        </Box>
+                        <Box
+                          my={"auto"}
+                          // bg={useColorModeValue("gray.800", "gray.200")}
+                          alignContent={"center"}>
+                          <BsBag size={"3em"} />
+                        </Box>
+                      </Flex>
+                      <Box textAlign="right" mt={3}>
+                        <Text
+                          fontSize="sm"
+                          fontWeight="bold"
+                          cursor="pointer"
+                          onClick={() => navigate("/admin/orders")}>
+                          View Details
+                        </Text>
+                      </Box>
+                    </Stat>
 
-              <div className="row pr-4">
-                <div className="col-xl-3 col-sm-6 mb-3">
-                  <div className="card text-white bg-success o-hidden h-100">
-                    <div className="card-body">
-                      <div className="text-center card-font-size">
-                        Products
-                        <br /> <b>{products && products.length}</b>
-                      </div>
-                    </div>
-                    <Link
-                      className="card-footer text-white clearfix small z-1"
-                      to="/admin/products"
-                    >
-                      <span className="float-left">View Details</span>
-                      <span className="float-right">
-                        <i className="fa fa-angle-right"></i>
-                      </span>
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="col-xl-3 col-sm-6 mb-3">
-                  <div className="card text-white bg-danger o-hidden h-100">
-                    <div className="card-body">
-                      <div className="text-center card-font-size">
-                        Orders
-                        <br /> <b>{orders && orders.length}</b>
-                      </div>
-                    </div>
-                    <Link
-                      className="card-footer text-white clearfix small z-1"
-                      to="/admin/orders"
-                    >
-                      <span className="float-left">View Details</span>
-                      <span className="float-right">
-                        <i className="fa fa-angle-right"></i>
-                      </span>
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="col-xl-3 col-sm-6 mb-3">
-                  <div className="card text-white bg-info o-hidden h-100">
-                    <div className="card-body">
-                      <div className="text-center card-font-size">
-                        Users
-                        <br /> <b>{users && users.length}</b>
-                      </div>
-                    </div>
-                    <Link
-                      className="card-footer text-white clearfix small z-1"
-                      to="/admin/users"
-                    >
-                      <span className="float-left">View Details</span>
-                      <span className="float-right">
-                        <i className="fa fa-angle-right"></i>
-                      </span>
-                    </Link>
-                  </div>
-                </div> 
-
-                <div className="col-xl-3 col-sm-6 mb-3">
-                  <div className="card text-white bg-warning o-hidden h-100">
-                    <div className="card-body">
-                      <div className="text-center card-font-size">
-                        Out of Stock
-                        <br /> <b>{outOfStock}</b>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-           
-            </Fragment>
-          )}
-        </div>
+                    <Stat
+                      px={{ base: 2, md: 4 }}
+                      py={"5"}
+                      shadow={"xl"}
+                      border={"1px solid"}
+                      // borderColor={useColorModeValue("gray.800", "gray.500")}
+                      rounded={"lg"}>
+                      <Flex justifyContent={"space-between"}>
+                        <Box pl={{ base: 2, md: 4 }}>
+                          <StatLabel fontWeight={"medium"} isTruncated>
+                            Users
+                          </StatLabel>
+                          <StatNumber fontSize={"2xl"} fontWeight={"medium"}>
+                            {users && users.length}
+                          </StatNumber>
+                        </Box>
+                        <Box
+                          my={"auto"}
+                          // bg={useColorModeValue("gray.800", "gray.200")}
+                          alignContent={"center"}>
+                          <AiOutlineTeam size={"3em"} />
+                        </Box>
+                      </Flex>
+                      <Box textAlign="right" mt={3}>
+                        <Text
+                          fontSize="sm"
+                          fontWeight="bold"
+                          cursor="pointer"
+                          onClick={() => navigate("/admin/users")}>
+                          View Details
+                        </Text>
+                      </Box>
+                    </Stat>
+                    <Stat
+                      px={{ base: 2, md: 4 }}
+                      py={"5"}
+                      shadow={"xl"}
+                      border={"1px solid"}
+                      // borderColor={useColorModeValue("gray.800", "gray.500")}
+                      rounded={"lg"}>
+                      <Flex justifyContent={"space-between"}>
+                        <Box pl={{ base: 2, md: 4 }}>
+                          <StatLabel fontWeight={"medium"} isTruncated>
+                            Out of Stock
+                          </StatLabel>
+                          <StatNumber fontSize={"2xl"} fontWeight={"medium"}>
+                            {outOfStock}
+                          </StatNumber>
+                        </Box>
+                        <Box
+                          my={"auto"}
+                          // bg={useColorModeValue("gray.800", "gray.200")}
+                          alignContent={"center"}>
+                          <BsFillCartXFill size={"3em"} />
+                        </Box>
+                      </Flex>
+                    </Stat>
+                  </SimpleGrid>
+                </Box>
+              </Fragment>
+            )}
+          </div>
+        </Box>
       </div>
-      <Fragment>
+
+      <Box
+        align="center"
+        maxW="7xl"
+        mx={"auto"}
+        pt={5}
+        px={{ base: 2, sm: 12, md: 17 }}>
+        <Fragment>
         <h1>MONTHLY SALES</h1>
         <MonthlySalesChart data={salesPerMonth} />
         </Fragment>
@@ -170,7 +268,7 @@ products?.forEach((product) => {
         <h1>PRODUCT SALES</h1>
           <ProductSalesChart data={productSales} />
         </Fragment>
-    
+      </Box>
     </Fragment>
   );
 };

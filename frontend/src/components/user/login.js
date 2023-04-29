@@ -15,11 +15,14 @@ import {
   Text,
  
 } from "@chakra-ui/react";
+import { googleLogout, useGoogleLogin } from '@react-oauth/google';
+
 //import swal from "sweetalert";
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
-import { login, clearErrors } from "../../actions/userActions";
+import { login, clearErrors,glogin } from "../../actions/userActions";
 
 
 import { toast } from "react-toastify";
@@ -48,7 +51,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [user, setUser] = useState([]);
 
   const redirect = location.search ? location.search.split("=")[1] : "/";
   const [eye, setEye] = useState(false);
@@ -79,13 +82,31 @@ const Login = () => {
 
       dispatch(clearErrors());
     }
-  }, [dispatch, isAuthenticated, error, navigate, redirect]);
+    if (user) {
+        axios
+          .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+            headers: {
+              Authorization: `Bearer ${user.access_token}`,
+              Accept: 'application/json'
+            }
+          })
+          .then((res) => {
+            dispatch(glogin(res.data))
+          })
+          .catch((err) => console.log(err));
+      }
+    }, [dispatch, isAuthenticated, error, navigate, redirect, user]);
 
   const loginHandler = (e) => {
     e.preventDefault();
 
     dispatch(login(email, password));
   };
+  
+  const googlelogin = useGoogleLogin({
+    onSuccess: (codeResponse) => setUser(codeResponse),
+    onError: (error) => console.log('Login Failed:', error)
+  });
 
   return (
     <>
@@ -134,6 +155,13 @@ const Login = () => {
                 >
                   {loading ? <Spinner /> : "Login"}
                 </Button>
+                <Button
+                    color="dark"
+                    className="button1"
+                    onClick={() => googlelogin()}
+                  >
+                    <span>Continue with Google</span>
+                  </Button>
               </Stack>
               <Stack pt={6}>
                 <Text align={"center"}>

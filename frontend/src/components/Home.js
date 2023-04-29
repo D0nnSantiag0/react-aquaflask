@@ -1,16 +1,19 @@
-import { useEffect, useState,Fragment } from "react";
+import { useEffect, useState, Fragment } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Flex, Box, Spacer, Grid, ColorModeProvider } from "@chakra-ui/react";
+// import FilterData from "../Filter/Filters/FilterData";
+// import { getData } from "../redux/DataReducer/action";
+import { Flex, Box, Spacer, Grid, Heading } from "@chakra-ui/react";
 import Product from "./product/Product";
 import { useMediaQuery } from "@chakra-ui/react";
 import Loading from "../components/layout/Loading";
 import { useLocation, useSearchParams, useParams } from "react-router-dom";
-import Navbar from "../components/layout/Navbar";
 import { getProducts } from "../actions/productActions";
+import Carousel from "../components/layout/Carousel";
 import Slider, { Range, createSliderWithTooltip } from "rc-slider";
 import "rc-slider/assets/index.css";
-import Pagination from "react-js-pagination";
-
+import { AiOutlineFileSearch } from "react-icons/ai";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 
 const Home = () => {
@@ -19,28 +22,14 @@ const Home = () => {
   const Range = createSliderWithTooltip(Slider.Range);
   const [price, setPrice] = useState([1, 1000]);
   const [color, setColor] = useState("");
-  const [size,setSize] = useState("");
+  const [size, setSize] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [isLargerThan] = useMediaQuery("(min-width: 768px)");
 
-    const colors = [
-      "Reds",
-      "Blues",
-      "Greens",
-      "Pinks",
-      "Purples",
-  ]
+  const colors = ["Reds", "Blues", "Greens", "Pinks", "Purples"];
 
-  const sizes = [
-      "14oz",
-      "18oz",
-      "22oz",
-      "32oz",
-      "40oz",
-      "64oz",
-  ]
-
+  const sizes = ["14oz", "18oz", "22oz", "32oz", "40oz", "64oz"];
 
   const {
     loading,
@@ -69,16 +58,33 @@ const Home = () => {
     count = filteredProductsCount;
   }
 
+  //INFINITESCROLL
+  const [dataSource, setDataSource] = useState(products.slice(0, 3));
+  const [hasMore, setHasMore] = useState(true);
+  
+  const fetchMoreData = () => {
+    if (dataSource.length < products.length) {
+      setTimeout(() => {
+        const newData = products.slice(0, dataSource.length + 3);
+        setDataSource(newData);
+      }, 500);
+    } else {
+      setHasMore(false);
+    }
+  };
+
   return (
     <div className="AllProducts">
-      <h1>ALL PRODUCT</h1>
+      <br />
+
       {loading ? (
         <Loading />
-        ) : (
-          <Fragment>
+      ) : (
+        // <>
+
         <Flex flexDirection={isLargerThan ? "row" : "column"}>
           <Box width={isLargerThan ? "100%" : "100%"}>
-          <div className="row">
+            <div className="row">
               {keyword ? (
                 <Fragment>
                   <div className="col-6 col-md-3 mt-5 mb-5">
@@ -110,8 +116,7 @@ const Home = () => {
                                 listStyleType: "none",
                               }}
                               key={color}
-                              onClick={() => setColor(color)}
-                            >
+                              onClick={() => setColor(color)}>
                               {color}
                             </li>
                           ))}
@@ -119,61 +124,63 @@ const Home = () => {
                       </div>
                     </div>
                   </div>
+
                   <div className="col-6 col-md-9">
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <AiOutlineFileSearch size={"2em"} />
+                      <Heading
+                        align={"left"}
+                        style={{
+                          marginLeft: "10px",
+                          marginBottom: "0",
+                          fontSize: "15px",
+                        }}>
+                        Search result for '{keyword}'
+                      </Heading>
+                    </div>
+
                     <div className="row">
-                      <br/>
-                  {products?.length > 0 &&
-                    products?.map((item) => {
-                    return <Product key={item.key} item={item} />;
-                  })}
+                      <br />
+                      {products?.length > 0 &&
+                        products?.map((item) => {
+                          return <Product key={item.key} item={item} />;
+                        })}
                     </div>
                   </div>
-
                 </Fragment>
               ) : (
-             
-                <Grid
-                templateColumns={
-                  isLargerThan ? "repeat(4, 1fr)" : "repeat(2, 1fr)"
-                }
-                gap={"5px"}
-              >
-               {products?.length > 0 &&
-                products?.map((item) => {
-                  <br/>
-                  return <Product key={item.key} item={item} />;
-                })}
-              </Grid>
-               
+                <Box w="95%" m="auto">
+                   <Carousel />
+                  <br />
+                  <br />
+                  <Heading align={"center"}> Products</Heading>
+
+                  <InfiniteScroll
+                    dataLength={dataSource.length}
+                    next={fetchMoreData}
+                    hasMore={hasMore}
+                    loader={<p>Loading...</p>}
+                    endMessage={
+                      <p style={{ textAlign: "center" }}>
+                        <b>Yay! You have seen it all</b>
+                      </p>
+                    }>
+                    <Grid
+                      templateColumns={
+                        isLargerThan ? "repeat(3, 1fr)" : "repeat(2, 1fr)"
+                      }
+                      gap={"5px"}>
+                      {dataSource.map((item) => (
+                        <Product key={item.key} item={item} />
+                      ))}
+                    </Grid>
+                  </InfiniteScroll>
+                 
+                </Box>
               )}
             </div>
-          
-            </Box>
-
-            <Box>
-            {resPerPage <= count && (
-            <div className="d-flex justify-content-center mt-5">
-              <Pagination
-                activePage={currentPage}
-                itemsCountPerPage={resPerPage}
-                totalItemsCount={productsCount}
-                onChange={setCurrentPageNo}
-                nextPageText={"Next"}
-                prevPageText={"Prev"}
-                firstPageText={"First"}
-                lastPageText={"Last"}
-                itemClass="page-item"
-                linkClass="page-link"
-              />
-            </div>
-        
-          )}
-            
-            </Box>
-          
-         
+          </Box>
         </Flex>
-        </Fragment>
       )}
     </div>
   );
