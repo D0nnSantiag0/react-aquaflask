@@ -7,6 +7,9 @@ import { useNavigate } from "react-router-dom";
 const Search = () => {
 
   const [keyword, setKeyword] = useState("");
+  const [color, setColor] = useState("");
+  const [size, setSize] = useState("");
+
   let navigate = useNavigate();
 
   const {products } = useSelector((state) => state.products);
@@ -51,10 +54,13 @@ const Search = () => {
     }
   };
   
+  //UPDATE HERE ADD WINDOWS RELOAD
   const handleClear = () => {
     setKeyword("");
+    setColor("");
+    setSize("");
     navigate("", { replace: true });
-
+    window.location.reload();
   };
 
 

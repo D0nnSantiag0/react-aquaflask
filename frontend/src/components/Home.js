@@ -8,14 +8,16 @@ import Product from "./product/Product";
 import { useMediaQuery } from "@chakra-ui/react";
 import Loading from "../components/layout/Loading";
 import { useLocation, useSearchParams, useParams } from "react-router-dom";
+import Navbar from "../components/layout/Navbar";
 import { getProducts } from "../actions/productActions";
 import Carousel from "../components/layout/Carousel";
 import Slider, { Range, createSliderWithTooltip } from "rc-slider";
 import "rc-slider/assets/index.css";
 import { AiOutlineFileSearch } from "react-icons/ai";
+import Pagination from "react-js-pagination";
 import InfiniteScroll from "react-infinite-scroll-component";
-
-
+import Paginate from "../components/product/Paginate";
+//import FilterChecked from "../Filter/Filters/FilterChecked";
 const Home = () => {
   const dispatch = useDispatch();
   const createSliderWithToolTip = Slider.createSliderWithToolTip;
@@ -36,18 +38,17 @@ const Home = () => {
     products,
     error,
     productsCount,
-    resPerPage,
     filteredProductsCount,
   } = useSelector((state) => state.products);
 
   let { keyword } = useParams();
 
   useEffect(() => {
-    dispatch(getProducts(keyword, currentPage, price, color));
+    dispatch(getProducts(keyword, currentPage, price, color, size));
     if (error) {
       return alert.error(error);
     }
-  }, [dispatch, alert, error, keyword, price, currentPage, color]);
+  }, [dispatch, alert, error, keyword, price, currentPage, color, size]);
 
   function setCurrentPageNo(pageNumber) {
     setCurrentPage(pageNumber);
@@ -61,17 +62,36 @@ const Home = () => {
   //INFINITESCROLL
   const [dataSource, setDataSource] = useState(products.slice(0, 3));
   const [hasMore, setHasMore] = useState(true);
+  // const [dataSource, setDataSource] = useState([]);
+  // const [hasMore, setHasMore] = useState(true);
   
+
+  // const fetchMoreData = () => {
+  //   if (dataSource.length < products.length) {
+  //     setTimeout(() => {
+  //       const newData = products.slice(0, dataSource.length + 3);
+  //       setDataSource(newData);
+  //     }, 500);
+  //   } else {
+  //     setHasMore(false);
+  //   }
+  // };
   const fetchMoreData = () => {
-    if (dataSource.length < products.length) {
-      setTimeout(() => {
-        const newData = products.slice(0, dataSource.length + 3);
-        setDataSource(newData);
-      }, 500);
-    } else {
-      setHasMore(false);
-    }
+    setTimeout(() => {
+      if (dataSource.length >= products.length) {
+        setHasMore(false);
+        return;
+      }
+      const newData = products.slice(0, dataSource.length + 3);
+      setDataSource(newData);
+    }, 500);
   };
+  
+  useEffect(() => {
+    if (products.length > 0) {
+      setDataSource(products.slice(0, 3));
+    }
+  }, [products]);
 
   return (
     <div className="AllProducts">
@@ -122,6 +142,23 @@ const Home = () => {
                           ))}
                         </ul>
                       </div>
+                      <hr className="my-5" />
+                      <div className="mt-5">
+                        <h4 className="mb-3">Sizes</h4>
+                        <ul className="pl-0">
+                          {sizes.map((size) => (
+                            <li
+                              style={{
+                                cursor: "pointer",
+                                listStyleType: "none",
+                              }}
+                              key={size}
+                              onClick={() => setSize(size)}>
+                              {size}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
                   </div>
 
@@ -150,7 +187,7 @@ const Home = () => {
                 </Fragment>
               ) : (
                 <Box w="95%" m="auto">
-                   <Carousel />
+                  <Carousel />
                   <br />
                   <br />
                   <Heading align={"center"}> Products</Heading>
@@ -175,7 +212,6 @@ const Home = () => {
                       ))}
                     </Grid>
                   </InfiniteScroll>
-                 
                 </Box>
               )}
             </div>

@@ -7,56 +7,122 @@ const Order = require('../models/order')
 
 
 // const getProducts = async (req, res, next) => {
-//   const resPerPage = 4;
-
+//   // const products = await Product.find();
 //   const productsCount = await Product.countDocuments();
-
-//   // console.log(productsCount,req.query,Product.find())
-
-//   // console.log(Product.find())
-
 //   const apiFeatures = new APIFeatures(Product.find(), req.query)
 //     .search()
 //     .filter();
-
 
 //   const products = await apiFeatures.query;
 //   let filteredProductsCount = products.length;
 
 //   res.status(200).json({
 //     success: true,
-//     productsCount,
 //     filteredProductsCount,
-//     resPerPage,
+//     productsCount,
 //     products,
 //   });
 // };
+// const getProducts = async (req, res, next) => {
+//   // const products = await Product.find();
+//   const productsCount = await Product.countDocuments();
+//   const apiFeatures = new APIFeatures(Product.find(), req.query)
+//     .search()
+//     .filter();
 
+//   const products = await apiFeatures.query;
+//   let filteredProductsCount = products.length;
+
+//   res.status(200).json({
+//     success: true,
+//     filteredProductsCount,
+//     productsCount,
+//     products,
+//   });
+// };
+// const getProducts = async (req, res, next) => {
+//   const apiFeatures = new APIFeatures(Product.find(), req.query)
+//     .search().filter();
+
+//   const products = await apiFeatures.query;
+//   const productsCount = products.length;
+
+//   res.status(200).json({
+//     success: true,
+//     productsCount,
+//     products,
+//   });
+// };
+// const getProducts = async (req, res, next) => {
+//   const apiFeatures = new APIFeatures(Product.find(), req.query);
+
+//   if (req.query.keyword) {
+//     apiFeatures.search();
+//   } 
+//   if (req.query.color) {
+//     apiFeatures.filter();
+//   }
+//   if (req.query.size) {
+//     apiFeatures.filter();
+//   }
+//   const products = await apiFeatures.query;
+//   const productsCount = products.length;
+
+//   res.status(200).json({
+//     success: true,
+//     productsCount,
+//     products,
+//   });
+
+//   if (!req.query.keyword && !req.query.color && !req.query.size) {
+//     // if no filters are applied, return all products
+//     const allProducts = await Product.find();
+//     res.status(200).json({
+//       success: true,
+//       productsCount: allProducts.length,
+//       products: allProducts,
+//     });
+//   }
+// };
+
+//UPDATE HERE
 const getProducts = async (req, res, next) => {
+  const apiFeatures = new APIFeatures(Product.find(), req.query);
 
-  const resPerPage = 4;
-  const productsCount = await Product.countDocuments();
-    // console.log(productsCount,req.query,Product.find())
-    // console.log(Product.find().find())
-    const apiFeatures = new APIFeatures(Product.find(), req.query).search().filter()
+  if (req.query.keyword) {
+    apiFeatures.search();
+  }
 
+  if (req.query.color) {
+    apiFeatures.filter();
+  }
 
+  if (req.query.size) {
+    apiFeatures.filter();
+  }
 
-  //new codes
-  apiFeatures.pagination(resPerPage);
-  const products = await apiFeatures.query;
-
-  let filteredProductsCount = products.length;
-  // console.log(products)
-  res.status(200).json({
-    success: true,
-    productsCount,
-    products,
-    filteredProductsCount,
-    resPerPage
-})
-
+  if (!req.query.keyword && !req.query.color && !req.query.size) {
+    // if no filters or search criteria are specified, return all products
+    const allProducts = await Product.find();
+    res.status(200).json({
+      success: true,
+      productsCount: allProducts.length,
+      products: allProducts,
+    });
+  } else {
+    const products = await apiFeatures.query;
+    const productsCount = products.length;
+    res.status(200).json({
+      success: true,
+      productsCount,
+      products,
+    });
+  }
 };
+
+
+
+
 
 
 const newProduct = async (req, res, next) => {

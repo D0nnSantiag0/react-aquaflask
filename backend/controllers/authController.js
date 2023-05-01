@@ -245,6 +245,8 @@ exports.updateProfile = async (req, res, next) => {
   const newUserData = {
     name: req.body.name,
     email: req.body.email,
+    address: req.body.address,
+    phone: req.body.phone
   };
   // Update avatar
 
@@ -256,9 +258,12 @@ exports.updateProfile = async (req, res, next) => {
       req.body.avatar,
       {
         folder: "avatars",
+  
         width: 150,
+  
         crop: "scale",
       },
+      
       (err, res) => {
         console.log(err, res);
       }

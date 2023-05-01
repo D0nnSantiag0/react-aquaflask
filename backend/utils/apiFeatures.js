@@ -1,65 +1,58 @@
 class APIFeatures {
   constructor(query, queryStr) {
     this.query = query;
-
     this.queryStr = queryStr;
   }
 
   search() {
-    const keyword = this.queryStr.keyword
-      ? {
-          name: {
-            $regex: this.queryStr.keyword,
+    if (!this.queryStr.keyword) {
+      return this;
+    }
 
-            $options: "i",
-          },
-        }
-      : {};
+    const keyword = {
+      name: {
+        $regex: this.queryStr.keyword,
+        $options: 'i',
+      },
+    };
 
-    console.log(this.queryStr);
-
-    this.query = this.query.find({ ...keyword });
+    this.query = this.query.find(keyword);
 
     return this;
   }
 
+  //UPDATE HERE
   filter() {
-    const queryCopy = { ...this.queryStr };
+    console.log(this.queryStr.color); // add this line
+    const queryObj = { ...this.queryStr };
+    const excludedFields = ['page', 'sort', 'limit', 'keyword'];
+    excludedFields.forEach((el) => delete queryObj[el]);
+  
+    if (queryObj.color) {
+      queryObj.color = queryObj.color.split(',');
+    }
 
-    // console.log(queryCopy);
+    if (queryObj.size) {
+      queryObj.size = queryObj.size.split(',');
+    }
 
-    // Removing fields from the query
-
-    const removeFields = ["keyword", "limit", "page"];
-
-    removeFields.forEach((el) => delete queryCopy[el]);
-
-    // Advance filter for price, ratings etc
-
-    let queryStr = JSON.stringify(queryCopy);
-
-    console.log(queryStr);
-
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match) => `$${match}`);
-
-    console.log(queryStr);
-
-    this.query = this.query.find(JSON.parse(queryStr));
-
-    console.log(JSON.parse(queryStr));
-
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    
+    // this.query = this.query.find(JSON.parse(queryStr));
+     // Check if any query parameter was passed
+     if (Object.keys(queryObj).length === 0) {
+      // If no query parameter was passed, remove any previous filters
+      this.query = this.model.find();
+  } else {
+      // If query parameters were passed, apply filters
+      this.query = this.query.find(JSON.parse(queryStr));
+  }
+  
     return this;
   }
 
-  pagination(resPerPage) {
-    const currentPage = Number(this.queryStr.page) || 1;
 
-    const skip = resPerPage * (currentPage - 1);
-
-    this.query = this.query.limit(resPerPage).skip(skip);
-
-    return this;
-  }
 }
 
 module.exports = APIFeatures;

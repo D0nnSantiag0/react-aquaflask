@@ -15,8 +15,8 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Provider store={store}>
-      <GoogleOAuthProvider clientId="312244999141-079mf5amd8bd95onda3415c64vqrbcp6.apps.googleusercontent.com">
-        <ChakraProvider theme={theme}>
+      <GoogleOAuthProvider clientId="663013719320-6up0r0hi2e0p4dgcgijgude4b9bhgt61.apps.googleusercontent.com">       
+       <ChakraProvider theme={theme}>
           <App />
         </ChakraProvider>
         </GoogleOAuthProvider>

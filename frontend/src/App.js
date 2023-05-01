@@ -20,6 +20,10 @@ import ProductDetails from "./components/product/ProductDetails";
 import Login from "./components/user/login";
 import Register from "./components/user/register";
 import Profile from './components/user/profile';
+import UpdatePassword from "./components/user/UpdatePassword";
+import ForgotPassword from "./components/user/ForgotPassword";
+import NewPassword from "./components/user/NewPassword";
+import UpdateProfile from "./components/user/UpdateProfile";
 
 //------------------ADMIN------------------------//
 import Dashboard from "./components/admin/Dashboard";
@@ -82,7 +86,28 @@ function App() {
         <Route path="/order/:id" element={<ProtectedRoute><OrderDetails /></ProtectedRoute>}/>
         <Route path="/admin/orders" element={<ProtectedRoute isAdmin={true}><OrdersList/></ProtectedRoute>}/>
         <Route path="/admin/order/:id" element={<ProtectedRoute isAdmin={true}><ProcessOrder /></ProtectedRoute>}/>
+        <Route path="/password/update" element={<ProtectedRoute><UpdatePassword /></ProtectedRoute>}exact="true"/>
+        <Route
+          path="/password/forgot"
+          element={<ForgotPassword />}
+          exact="true"
+        />
+        <Route
+          path="/password/reset/:token"
+          element={<NewPassword />}
+          exact="true"
+        />
+            <Route
+          path="/me/update"
+          element={
+            <ProtectedRoute>
+              <UpdateProfile />
+            </ProtectedRoute>
+          }
+          exact="true"
+        />
         </Routes>
+        
      
       <ToastContainer />
       {!loading && (!isAuthenticated || user.role !== "admin") }
