@@ -42,7 +42,7 @@ import {
 //     });
 //   }
 // };
-export const getProducts = (keyword = '',currentPage = 1, price, color) => async (dispatch) => {
+export const getProducts = (keyword = '',currentPage = 1, price, color,size) => async (dispatch) => {
   try {
       dispatch({
           type: ALL_PRODUCTS_REQUEST
